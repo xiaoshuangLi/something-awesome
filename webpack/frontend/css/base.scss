@@ -1,0 +1,16 @@
+$bodyColor: #f7ead8;
+$maxWidth: 640px;
+
+body{
+  margin: 10px 20px 10px 20px;
+  /* reduce color values */
+  color: #ff0000;
+  /* drop outdated vendor prefixes */
+  -webkit-border-radius: 16px;
+  border-radius: 16px;
+  /* remove duplicated properties */
+  font-weight: normal;
+  font-weight: normal;
+  /* reduce position values */
+  background-position: bottom right;
+}

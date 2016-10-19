@@ -1,0 +1,5 @@
+@import "./base.css";
+
+.print{
+  @mixin bg contain, 'http://source.cloudin9.com/merry/img/h5/print.png';
+}
