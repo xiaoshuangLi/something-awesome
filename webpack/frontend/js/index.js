@@ -1,8 +1,14 @@
 import 'babel-polyfill'
-import test from './module'
-import '../css/base.scss'
-import $ from "jquery"
+import React from 'react'
+import ReactDom from 'react-dom'
+import Page from './components/page'
+import '../css/index.scss'
 
-test()
+const data = {};
 
-$('body').addClass('a');
+ReactDom.render(
+  (<Page {...data} />),
+	document.getElementById('app')
+)
+
+var lxss = Object.assign

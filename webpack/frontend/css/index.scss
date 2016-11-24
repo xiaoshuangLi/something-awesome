@@ -1,0 +1,101 @@
+@import "./base.scss";
+
+.circle{
+	width: 300px;
+	height: 300px;
+	border-radius: 50%;
+	margin: 10px auto;
+	background-color: white;
+	
+	@extend %relative;
+}
+
+@mixin item($num: 10, $width: 32%, $height: 40%, $top: 5%){
+	$angle: (90deg)/$num;
+	$perWidth: sin($angle) * 2;
+	$perHeight:(tan($angle)/sin($angle)) /2;
+	$perTop: 1 - cos($angle);
+	$width: percentage($perWidth);
+	$height: percentage($perHeight);
+	$top: percentage($perTop);
+	
+	$calu: (100% - $top) / $height;
+	$percent: percentage($calu);
+
+	.item-content{
+		&:after {
+	    width: $width;
+	    height: $height;
+	    margin-left: calc(0px - #{$width/2});
+	    top: $top;
+	    width: $width;
+	    height: $height;
+	    transform-origin: 50% $percent;
+	    transform: rotate(#{180deg / $num});
+		}
+	}
+
+	@for $i from 1 through $num {
+		&:nth-child(#{$i}){
+			transform: rotate(360deg * ( ($i - 1) / $num));
+	    transform-origin: 50% 100%;
+		}
+	}
+}
+
+$max: 10;
+
+.item-list{
+	@for $a from 2 through $max {
+		&[data-num='#{$a}'] {
+			.item{
+				@include item($a);
+
+				@for $i from 1 through $a {
+					&:nth-child(#{$i}) {
+						@extend %block;
+					}
+				}
+			}
+		}
+	}
+}
+
+.item{
+	width: 50%;
+	height: 50%;
+	top: 0%;
+	left: 25%;
+	
+	@extend %none;
+	@extend %absolute;
+
+	.item-content {
+	  @extend %fullwidth;
+	  @extend %fullheight;
+
+		&:before, &:after{
+			content: '';
+		};
+
+		&:before{
+			width: 1px;
+			top: 0;
+			left: 50%;
+			background-color: red;
+
+			@extend %absolute;
+			@extend %inline-block;
+			@extend %h100;
+		}
+		
+		&:after{
+			background-color: grey;
+	    left: 50%;
+
+			@extend %absolute;
+			@extend %inline-block;
+		}
+	}
+}
+
