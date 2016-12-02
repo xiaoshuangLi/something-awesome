@@ -96,7 +96,12 @@ module.exports = {
         }
       },
       {
-        test: /[^|\_b]\.(jpe?g|png|gif|svg)$/i,
+        test: /\.svg$/,
+        loader: 'babel?presets[]=es2015,presets[]=react!svg-react'
+      },
+      {
+        test: /[^|\_b]\.(jpe?g|png|gif)$/i,
+        // test: /[^|\_b]\.(jpe?g|png|gif|svg)$/i,
         loaders: [
           // 'url?limit=10240&name=img/[hash:8].[name].[ext]',
           'file?hash=sha512&digest=hex&name=img/[hash].[ext]',
@@ -104,7 +109,8 @@ module.exports = {
         ]
       },
       {
-        test: /\_b\.(jpe?g|png|gif|svg)$/i,
+        test: /\_b\.(jpe?g|png|gif)$/i,
+        // test: /\_b\.(jpe?g|png|gif|svg)$/i,
         loaders: [
           'url?name=img/[hash:8].[name].[ext]',
           // 'file?hash=sha512&digest=hex&name=[hash].[ext]',
