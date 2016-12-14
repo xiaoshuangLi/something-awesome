@@ -1,4 +1,5 @@
 var webpack = require('webpack');
+var path = require('path');
 var webpackDevMiddleware = require('webpack-dev-middleware')
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -13,6 +14,7 @@ if( !global.env){
 
 function gPlugins(){
   var res = [
+    new webpack.HotModuleReplacementPlugin(),
     new ExtractTextPlugin("css/[name].css", {
       allChunks: true
     }),
@@ -20,7 +22,6 @@ function gPlugins(){
       'process.env.NODE_ENV': JSON.stringify( pro ? 'production' : 'development')
     }),
     new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
       template: "./index.html",
       hash: true,
@@ -45,7 +46,7 @@ function gPlugins(){
 
 module.exports = {
   devtool: pro ? 'cheap-module-source-map' : 'source-map',
-  // devtool: 'cheap-module-source-map',
+  // devtool: 'source-map',
 
  //  entry: { 
  //    app: './frontend/js/index.js',
@@ -85,23 +86,15 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: ['babel'],
-        query: {
-          presets: ["es2015", "react"],
-          env: {
-            "development": {
-              "presets": ["react-hmre"]
-            }
-          }
-        }
+        loaders: ['babel'],
+        include: path.join(__dirname, 'frontend/js')
       },
       {
-        test: /\.svg$/,
+        test: /\_inline\.svg$/i,
         loader: 'babel?presets[]=es2015,presets[]=react!svg-react'
       },
       {
-        test: /[^|\_b]\.(jpe?g|png|gif)$/i,
-        // test: /[^|\_b]\.(jpe?g|png|gif|svg)$/i,
+        test: /^(?!.*(\_b|\_inline)).*\.(jpe?g|png|gif|svg)$/i,
         loaders: [
           // 'url?limit=10240&name=img/[hash:8].[name].[ext]',
           'file?hash=sha512&digest=hex&name=img/[hash].[ext]',
@@ -109,8 +102,7 @@ module.exports = {
         ]
       },
       {
-        test: /\_b\.(jpe?g|png|gif)$/i,
-        // test: /\_b\.(jpe?g|png|gif|svg)$/i,
+        test: /\_b\.(jpe?g|png|gif|svg)$/i,
         loaders: [
           'url?name=img/[hash:8].[name].[ext]',
           // 'file?hash=sha512&digest=hex&name=[hash].[ext]',

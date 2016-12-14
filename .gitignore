@@ -36,9 +36,6 @@ jspm_packages
 
 .env
 
-# ignore common
-common
-
 # ignore for webpack
 webpack/node_modules
 webpack/publicj
