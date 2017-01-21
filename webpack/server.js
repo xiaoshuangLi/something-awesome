@@ -8,8 +8,9 @@ var config = require('./webpack.config')
 
 var app = new (require('express'))()
 var port = 3000;
+var isPro = global.env == 'production';
 
-if(global.env == 'development') {
+if(!isPro) {
 	var compiler = webpack(config);
 	app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }))
 	app.use(webpackHotMiddleware(compiler))
@@ -19,7 +20,7 @@ app.use(express.static('./public'));
 app.use(express.static('./node_modules'));
 
 app.get("/", function(req, res) {
-  res.sendFile(__dirname + '/index.html')
+  res.sendFile(__dirname + (isPro ? '/public/html/' : '') + '/index.html')
 })
 
 app.listen(port, function(error) {

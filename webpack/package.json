@@ -43,7 +43,7 @@
     "wechat-oauth": "^1.1.1"
   },
   "devDependencies": {
-    "autoprefixer": "^6.5.0",
+    "autoprefixer": "^6.6.0",
     "babel": "^6.5.2",
     "babel-loader": "^6.2.5",
     "babel-polyfill": "^6.13.0",
