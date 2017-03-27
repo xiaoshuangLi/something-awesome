@@ -19,7 +19,7 @@ if(!isPro) {
 app.use(express.static('./public'));
 app.use(express.static('./node_modules'));
 
-app.get("/", function(req, res) {
+app.get("*", function(req, res) {
   res.sendFile(__dirname + (isPro ? '/public/html/' : '') + '/index.html')
 })
 
