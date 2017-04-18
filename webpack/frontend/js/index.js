@@ -6,11 +6,11 @@ import { Form, Input } from './validate';
 class App extends Component {
   render() {
     return (
-      <Form onChange={(a, b) => {console.log(a,b )}}>
-        <Input name="username" maxLength="10" validateInChange={true} onChange={(a, b) => {console.log(a,b )}}>
+      <Form onChange={(value, validate) => {console.log(value, validate)}}>
+        <Input name="username" maxLength="10" onChange={(value, validate) => {console.log(value, validate)}}>
           <input type="text"/>
         </Input>
-        <Input name="password" max="10" validateInChange={true} onChange={(val) => {console.log(val)}}>
+        <Input name="password" max="10" onBlur={(val) => {console.log(val)}}>
           <input type="password"/>
         </Input>
       </Form>
