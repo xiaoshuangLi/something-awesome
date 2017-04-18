@@ -1,0 +1,28 @@
+.cus-tab-render{
+	.ui-tab-header{
+		ul{
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
+
+		li{
+			display: inline-block;
+			padding: 5px 10px;
+		}
+
+		.ui-tab-header-line{
+			
+		}
+	}
+
+	.ui-tab-body{
+		.ui-tab-body-item{
+			padding: 10px;
+			
+			&:not(.ui-tab-body-item-active){
+				display: none;
+			}
+		}
+	}
+}

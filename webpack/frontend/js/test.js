@@ -1,23 +1,32 @@
-import { compose } from 'redux';
+function _argumentsToArray(args){
+  return [].slice.call(args)
+}
 
 function _composeObjFunc(){
-  let list = [].slice.call(arguments);
+  let list = _argumentsToArray(arguments);
   let res = Object.assign.apply(null, [{}, ...list]);
 
   Object.keys(res).forEach(attr => {
     let funcs = []
 
-    for(let v = list.length - 1; v > -1; v --) {
+    for(let v = list.length - 1; v >= 0; v --) {
       let item = list[v][attr];
       if(typeof item === 'function')
         funcs.push(item)
     }
 
-    if(funcs.length <= 1) {
+    if(funcs.reverse().length <= 1) {
       return
     }
 
-    res[attr] = compose.apply(null, funcs)
+    // res[attr] = compose.apply(null, funcs)
+    res[attr] = function(){
+      let args = _argumentsToArray(arguments)
+
+      funcs.forEach(func => {
+        func.apply(null, args)
+      })
+    }
   })
 
   return res

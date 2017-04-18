@@ -46,6 +46,7 @@ function gPlugins(){
 
 module.exports = {
   devtool: pro ? 'cheap-module-source-map' : 'source-map',
+  // devtool: pro ? 'cheap-module-source-map' : '',
   // devtool: 'source-map',
 
  //  entry: { 
