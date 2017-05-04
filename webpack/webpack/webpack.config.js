@@ -3,8 +3,9 @@ var path = require('path');
 var webpackDevMiddleware = require('webpack-dev-middleware')
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var CleanPlugin = require('clean-webpack-plugin');
 var htmlMinify = require('html-minifier');
-var pro = false;
+var pro = process.env.NODE_ENV == 'production';
 var rootPath = path.resolve(__dirname, '..');
 
 var babelConfig = require('../babel.json');
@@ -25,12 +26,6 @@ delete babelLoaderQuery.env;
 var WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
 var webpackIsomorphicToolsPlugin = new WebpackIsomorphicToolsPlugin(require('./webpack-isomorphic-tools'));
 
-if( !global.env){
-  require('dotenv').config({ silent: true });
-  global.env = process.env.NODE_ENV || 'development';
-  pro = global.env == 'production';
-}
-
 function gPlugins(){
   var res = [
     new webpack.optimize.CommonsChunkPlugin({ name: 'vendors' }),
@@ -50,7 +45,7 @@ function gPlugins(){
       allChunks: true
     }),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify( pro ? 'production' : 'development')
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
     }),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new HtmlWebpackPlugin({
@@ -78,6 +73,7 @@ function gPlugins(){
     }));
 
     res.push(webpackIsomorphicToolsPlugin);
+    res.push(new CleanPlugin([rootPath + '/public'], { root: rootPath }));
   }
 
   return res;

@@ -6,7 +6,7 @@ import '../css/index.scss';
 class App extends Component {
   render() {
     return (
-      <div className="container ng-hide">
+      <div className="container">
         <div className="header">
           <div className="img">
             <i className="t-font t-font-setting user percenter"></i>

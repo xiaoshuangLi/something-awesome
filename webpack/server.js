@@ -1,9 +1,6 @@
-require('dotenv').config({ silent: true });
+// require('dotenv').config({ silent: true });
+require('./webpack/webpack.config')
 require('./server.babel');
-
-if (global.env === 'production') {
-  process.env.NODE_ENV = 'production';
-}
 
 var WebpackIsomorphicTools = require('webpack-isomorphic-tools');
 global.webpackIsomorphicTools = new WebpackIsomorphicTools(require('./webpack/webpack-isomorphic-tools'))
