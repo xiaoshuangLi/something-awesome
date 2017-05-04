@@ -113,7 +113,7 @@ module.exports = {
       },
       {
         test: /\_inline\.svg$/i,
-        use: 'babel-loader?presets[]=es2015,presets[]=react!svg-react-loader'
+        loader: 'babel-loader?presets[]=es2015,presets[]=react!svg-react-loader'
       },
       {
         test: /^(?!.*(\_b|\_inline)).*\.(jpe?g|png|gif|svg)$/i,
