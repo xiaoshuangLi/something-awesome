@@ -310,6 +310,25 @@ $grey: #f3f3f3;
   @extend %inline-block;
 }
 
+%table{
+  display: table;
+  @extend %w100;
+
+  >*{
+    display: table-cell;
+
+    &.equal{
+      width: 50%;
+    }
+  }
+
+  &.center{
+    >*{
+      @extend %vmiddle;
+    }
+  }
+}
+
 // Tag
 input,textarea,*{
   padding:0;
@@ -418,22 +437,7 @@ body{
 }
 
 .table{
-  display: table;
-  @extend %w100;
-
-  >*{
-    display: table-cell;
-
-    &.equal{
-      width: 50%;
-    }
-  }
-
-  &.center{
-    >*{
-      @extend %vmiddle;
-    }
-  }
+  @extend %table;
 }
 
 @for $i from 1 through 20 {
