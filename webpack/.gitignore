@@ -1,0 +1,17 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+.idea/
+
+# assets
+assets/
+public/
+
+# Dependency directories
+node_modules
+
+# webpack isomorphic
+webpack-assets.json
+webpack-stats.json
