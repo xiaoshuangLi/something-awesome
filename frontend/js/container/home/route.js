@@ -2,7 +2,7 @@ const rootRoute = {
   path: 'home',
   component: require('js/components/App'),
   indexRoute: {
-    component: require('./pages/Test'),
+    component: require('./pages/Beauty'),
   },
   // childRoutes: [
   //   {

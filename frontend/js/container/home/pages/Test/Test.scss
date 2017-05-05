@@ -1,9 +1,0 @@
-@import "frontend/css/func.scss";
-
-$img: '~img/ed.jpeg';
-
-.page-home-test-render{
-  padding-top: 100%;
-  
-  @include bg(cover, $img);
-}
