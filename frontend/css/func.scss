@@ -1,0 +1,330 @@
+@import './mathsass/dist/math';
+
+// Public val
+$blue: rgb(194, 229, 156);
+$fontBlue: #3d99de;
+
+$green: rgb(100, 179, 244);
+
+$red: #ff5d5d;
+$grey: #f3f3f3;
+
+// Public mixin
+@mixin linearGradient($b: $blue, $c: $green, $a: to left) {
+  background: -webkit-linear-gradient($a, $b , $c);
+  background: linear-gradient($a, $b, $c);
+}
+
+@mixin bg($size: cover,$url:'/', $x: 50%, $y: 50%){
+  background-image: url($url);
+  background-position: $x $y;
+  background-size: $size;
+  background-repeat: no-repeat;
+}
+
+@mixin clearBoth{
+  &:before, &:after{
+    content: ' ';
+    display: table;
+    clear: both;
+  }
+}
+
+@mixin ellipsisMul($num: 1, $hei: ''){
+  -webkit-line-clamp: $num;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  display: -webkit-box;
+}
+
+@mixin marginLeft($w: 40px, $num: 8) {
+  $m: 1/($num - 1);
+  $perM: percentage($m);
+
+  margin-left: calc(#{$perM} - #{$w*$num/($num - 2)});
+  float: left;
+
+  &:first-child{
+    margin-left: 0px;
+  }
+}
+
+@mixin mCenter($mt: 0px, $ml: 0px, $t: 50%, $l: 50%) {
+  position: absolute;
+  top: $t;
+  left: $l;
+
+  margin-top: $mt;
+  margin-left: $ml;
+}
+
+@mixin opacityFade($a: 1, $b: 0) {
+  0%{
+    opacity: $a;
+  }
+  100%{
+    opacity: $b;
+  }
+}
+
+// Public Attr
+%absolute{
+  position: absolute;
+}
+
+%relative{
+  position: relative;
+}
+
+%fixed{
+  position: fixed;
+}
+
+%inline-block{
+  display: inline-block;
+}
+
+%block{
+  display: block;
+}
+
+%none{
+  display: none;
+}
+
+%w100{
+  width: 100%;
+}
+
+%h100{
+  height: 100%;
+}
+
+%hidden{
+  visibility: hidden;
+}
+
+%ohidden{
+  overflow: hidden;
+}
+
+%bg-grey{
+  background-color: $grey;
+}
+
+%pointer{
+  cursor: pointer;
+}
+
+%transparent{
+  opacity: 0;
+}
+
+%vmiddle{
+  vertical-align: middle;
+}
+
+%tcenter{
+  text-align: center;
+}
+
+%tleft{
+  text-align: left;
+}
+
+%tright{
+  text-align: right;
+}
+
+%left{
+  float: left;
+}
+
+%right{
+  float: right;
+}
+
+%pnone{
+  pointer-events: none;
+}
+
+%pall{
+  pointer-events: all;
+}
+
+%bgwhite{
+  background-color: white;
+}
+
+%fwhite{
+  color: white;
+}
+
+%fred{
+  color: $red;
+}
+
+%ifred{
+  color: $red !important;
+}
+
+%fblue{
+  color: $fontBlue;
+}
+
+%ifblue{
+  color: $fontBlue !important;
+}
+
+%overauto{
+  overflow: auto;
+}
+
+%overhidden{
+  overflow: hidden;
+}
+
+%bhidden{
+  backface-visibility: hidden;
+}
+
+%wnowrap{
+  white-space: nowrap;
+}
+
+%bold{
+  font-weight: bold;
+}
+
+%transitionlight{
+  transition-timing-function: cubic-bezier(1,1,1,1);
+}
+
+%fa{
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  @extend %inline-block;
+}
+
+%fullwidth{
+  left: 0;
+  right: 0;
+
+  @extend %absolute;
+}
+
+%fullheight{
+  top: 0;
+  bottom: 0;
+
+  @extend %absolute;
+}
+
+%full{
+  @extend %fullheight;
+  @extend %fullwidth;
+}
+
+%noscroll{
+  &::-webkit-scrollbar{
+    background: transparent;
+    opacity: 0;
+    display: none;
+  }
+}
+
+%percenter{
+  left: 50%;  
+  top: 50%;  
+  transform: translate(-50%, -50%);
+
+  @extend %absolute;
+}
+
+%ellipsis{
+  text-overflow: ellipsis;
+  @extend %wnowrap;
+  @extend %ohidden;
+}
+
+%row{
+  &:before, &:after{
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+%dflex{
+  display: flex;
+}
+
+%j-space-between{
+  justify-content: space-between;
+}
+
+%j-space-around{
+  justify-content: space-around;
+}
+
+%testflex{
+  flex-direction: column;
+
+  @extend %dflex;
+  @extend %j-space-between;
+}
+
+%testflex-around{
+  flex-direction: column;
+
+  @extend %dflex;
+  @extend %j-space-around;
+}
+
+%bg{
+  background-color: rgba(0,0,0,.3);
+
+  @extend %full;
+  @extend %fixed;
+}
+
+%border-radius-50{
+  border-radius: 50%;
+}
+
+%z-1{
+  z-index: 1
+}
+
+%fa{
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-smoothing: antialiased;
+
+  @extend %inline-block;
+}
+
+%table{
+  display: table;
+  @extend %w100;
+
+  >*{
+    display: table-cell;
+
+    &.equal{
+      width: 50%;
+    }
+  }
+
+  &.center{
+    >*{
+      @extend %vmiddle;
+    }
+  }
+}
