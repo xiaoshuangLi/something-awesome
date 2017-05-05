@@ -1,0 +1,164 @@
+@import "frontend/css/func.scss";
+
+$img: './beach.svg';
+$sunR: 12px;
+$cover: white;
+
+$num: 60;
+$time: 10;
+$fps: $time * 30;
+$minOpacity: 0.15;
+$maxOpacity: 0.55;
+$opacityRange: ($maxOpacity - $minOpacity) * 2;
+$moveDistance: 7;
+
+@function setStar{
+  @return (random(100) * 1vw, random(40) * 1vh, random(5) * 1px + 2px, random($maxOpacity * 100)/100, random(2), random(2), random(2))
+}
+
+$stars: ();
+@for $i from 1 through $num{
+  $star: setStar();
+  $stars: append($stars, $star);
+}
+
+@function getStarOpacity($opacity, $step) {
+  $res: $opacityRange * $step + $opacity;
+
+  @if $res > $maxOpacity {
+    $res: $maxOpacity * 2 - $res;
+  }
+
+  @if $res < $minOpacity {
+    $res: $minOpacity * 2 - $res;
+  }
+
+  @return $res;
+}
+
+@function getStarX($x, $step, $rand, $randDistance) {
+  @if $rand > 1.5 {
+    $rand: -1 * $rand;
+  }
+
+  $num: $step - 0.5;
+  $res: 1vw * abs($num) * $moveDistance * $rand * $randDistance + $x;
+
+  @return $res;
+}
+
+@function getStarY($y, $step, $rand, $randDistance) {
+  @if $rand > 1.5 {
+    $rand: -1 * $rand;
+  }
+
+  $num: $step - 0.5;
+  $res: 1vh * abs($num) * $moveDistance * $rand * $randDistance + $y;
+
+  @return $res;
+}
+
+@function getStar($star, $step){
+  $x: getStarX(nth($star, 1), $step, nth($star, 5), nth($star, 7));
+  $y: getStarY(nth($star, 2), $step, nth($star, 5), nth($star, 6));
+  $opacity: getStarOpacity(nth($star, 4), $step);
+
+  @return $x $y 2px  nth($star, 3) rgba(255,255,255, $opacity) ;
+}
+
+@function getStars($step: 0){
+  $starsShadow: ();
+
+  @for $i from 1 through $num{
+    $starsShadow: append($starsShadow, getStar(nth($stars, $i), $step), comma);
+  }
+
+  @return $starsShadow;
+}
+
+$fireStone: 3;
+$fireTime: 1.5;
+$fireFps: $time * 30;
+// $offset: 10vw;
+
+$width: 3px;
+$fireDistance: 0.15;
+$length: 150;
+$start: 120vw;
+$long: 60;
+$ratio: 5;
+
+@function getFireStone($step, $i){
+  $x: $start - 50vw + $i * $fireDistance * 1vw * $ratio - 1vw * $step * $long * $ratio;
+  $y: 0vh - $i * $fireDistance * 1vh + 1vh * $step * $long;
+  $posi: $i / $length;
+  $opacity: (1 -  $posi) * 0.8 * (1 - $step);
+
+  @return $x $y 1px (1 - $posi) * $width rgba(255, 255, 255, $opacity);
+}
+
+@function getFireStones($step: 0){
+  $stones: ();
+
+  @for $i from 1 through $length{
+    $stones: append($stones, getFireStone($step, $i), comma);
+  }
+
+  @return $stones;
+}
+
+.page-home-sun-render{
+  background: #000;
+  height: 100vh;
+
+  @include bg(60%, $img, 50%, 108%);
+
+  &:before{
+    content: '';
+    width: 2px;
+    height: 2px;
+    top: 0vh;
+    animation: fireStoneFly #{ $fireTime * 1s } infinite ease-in-out;
+    box-shadow: getFireStones();
+
+    @extend %percenter;
+    @extend %inline-block;
+    @extend %border-radius-50;
+  }
+
+  &:after{
+    content: '';
+    width: 2px;
+    height: 2px;
+    top: 0;
+    left: 0;
+    background: transparent;
+    animation: starShiny #{ $time * 1s } infinite ease-in-out;
+    box-shadow: getStars();
+
+    @extend %border-radius-50;
+    @extend %absolute;
+  }
+}
+
+@keyframes starShiny{
+  @for $i from 1 through $fps {
+    $step: $i / $fps;
+    $perStep: percentage($step);
+
+    #{$perStep} {
+      box-shadow: getStars($step);
+    }
+  }
+}
+
+@keyframes fireStoneFly{
+  @for $i from 1 through $fireFps {
+    $step: $i / $fireFps;
+    $perStep: percentage($step);
+
+    #{$perStep} {
+      box-shadow: getFireStones($step);
+    }
+  }
+}

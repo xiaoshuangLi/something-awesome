@@ -1,0 +1,72 @@
+@import "frontend/css/func.scss";
+
+$r: 110;
+$num: 5;
+$time: 5;
+$fps: $time * 30;
+$waveCover: white;
+
+.page-home-wave-render{
+  &:before{
+    content: '努力加载中···';
+    width: 1em;
+    text-align: center;
+    letter-spacing: 20px;
+    word-break: break-all;
+    text-align: center;
+    font-size: 14px;
+    color: #999;
+    transform: skewY(-10deg) translate(-50%, -60%);
+    text-shadow: -15px 15px 2px rgba(0,0,0, .2);
+
+    @extend %inline-block;
+    @extend %percenter;
+  }
+
+  &:after{
+    content: '';
+    width: 2px;
+    height: 2px;
+    bottom: 25%;
+    left: 50%;
+    background-color: transparent;
+    transform: rotateX(70deg);
+    animation: shadowWave #{$time / $num * 1s} infinite ease-out;
+
+    @extend %absolute;
+    @extend %inline-block;
+    @extend %border-radius-50;
+  }
+}
+
+@function getShadow($distance) {
+  $step: $distance / $r;
+  $shadowWidth: 1px + 6px * $step;
+  $shadowColorOpacity: 0.25 * (1 - $step);
+
+  @return 0 0 0 #{$distance - 0.5px} $waveCover, 0 0 $shadowWidth $distance * 1px rgba(0,0,0, $shadowColorOpacity);
+}
+
+@function getShadows($step) {
+  $list: ();
+
+  @for $i from 1 through $num {
+    $average: $r / $num;
+    $distance: $average * ($i - 1 + $step);
+
+    $list: append($list, getShadow($distance), comma);
+  }
+
+  @return $list;
+}
+
+@keyframes shadowWave{
+  @for $i from 1 through $fps {
+    $step: $i / $fps;
+    $perStep: percentage($step);
+
+    #{$perStep} {
+      box-shadow: getShadows($step);
+    }
+  }
+}

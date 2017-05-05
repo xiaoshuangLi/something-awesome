@@ -1,0 +1,116 @@
+@import "frontend/css/func.scss";
+
+$list: ('./ed.jpeg', './cave.jpeg', './bluesky.jpeg');
+$list: append($list, nth($list, 1), comma);
+$total: length($list);
+
+$num: 11;
+$time: 2;
+$stop: 2;
+$fpsPer: 30;
+$fpsPerPic: $fpsPer * $time;
+$fps: $fpsPerPic * $total;
+
+$single: $time + $stop;
+$all: $single * $total;
+$ratio: $time/$single;
+
+
+@function getBg($i: 0) {
+  @return url(nth($list, $i));
+}
+
+@function getBgs{
+  $res: ();
+
+  @for $i from 1 through $total {
+    $res: append($res, getBg($i), comma);
+  }
+
+  @return $res;
+}
+
+@function getBgPosition($i: 1, $step: 0) {
+  $i: $i - 1;
+  $curr: $step * $total;
+  $i: ($i - $curr);
+
+  @return calc(#{100vw * $i} - #{28px * $i}) 0%;
+}
+
+@function getBgsPosition($step: 0){
+  $res: ();
+
+  @for $i from 1 through length($list) {
+    $res: append($res, getBgPosition($i, $step), comma);
+  }
+
+  @return $res;
+}
+
+body{
+  background: #efefef;
+}
+
+.page-home-swiper-render{
+  margin: 10px;
+  padding-bottom: 60%;
+  border: 4px solid white;
+  border-radius: 5px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  box-shadow: 1px 1px 5px #999;
+
+  @for $i from 1 through $num {
+    &.num-#{$i} {
+      background-image: getBgs();
+      background-position: getBgsPosition();
+
+      animation: #{'swiper-' + inspect($total)} #{$all * 1s} linear infinite;
+    }
+  }
+}
+
+@for $i from 1 through $num {
+  @keyframes #{'swiper-' + inspect($total)} {
+    @for $i from 1 through $fps {
+      $step: $i / $fps;
+      $beforeTime: $i / $fpsPerPic;
+      $before: floor($beforeTime);
+
+      @if $before == 0{
+        $before: 0;
+      } 
+      @else if $before == 1{
+        $before: $time;
+      }
+      @else if $before > 1{
+        $before: $time * $before + $stop * ($before - 1);
+      }
+
+      $before: $before/$all;
+
+      $init: $step*$ratio + $before;
+      $perStep: percentage($init);
+
+      @if $i % $fpsPerPic == 0{
+        $eachEnd: $init - $time/$all;
+        $eachEndHalf: $init - $time/($all * 2);
+        $perEachEnd: percentage($eachEnd);
+        $perEachEndHalf: percentage($eachEndHalf);
+
+        #{$perEachEnd} {
+          background-position: getBgsPosition($step);
+        }
+
+        #{$perEachEndHalf} {
+          background-position: getBgsPosition($step);
+        }
+      }
+
+      #{$perStep} {
+        background-position: getBgsPosition($step);
+      }
+    }
+  }
+}
