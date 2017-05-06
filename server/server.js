@@ -18,11 +18,20 @@ if(!isPro) {
 
 app.use(express.static('./public'));
 
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+
+io.on('connection', function(socket) {
+  socket.on('go', function(url) {
+    io.emit('go', url);
+  });
+});
+
 app.get("*", function(req, res) {
   res.sendFile(rootPath + (isPro ? '/public/html/' : '') + '/index.html')
 })
 
-app.listen(port, function(error) {
+http.listen(port, function(error) {
   if (error) {
     console.error(error)
   } else {
