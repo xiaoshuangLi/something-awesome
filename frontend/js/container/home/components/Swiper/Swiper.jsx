@@ -3,14 +3,23 @@ import React, { Component } from 'react';
 import Ed from './ed.jpeg';
 import Cave from './cave.jpeg';
 import Sky from './bluesky.jpeg';
+import Fight from './fight.jpg';
 
 class Swiper extends Component {
+  constructor(props){
+    super(props);
 
-  render() {
+    this.state = {
+      obj: {},
+      list: [],
+    };
+  }
+
+  componentDidMount() {
     const list = [
       {img:Ed, title: 'Ed sheeran'}, 
       {img:Cave, title: 'Cave'}, 
-      {img:Sky, title: 'Night'}
+      {img:Fight, title: 'Fight Club'}
     ];
 
     const obj = list.reduce((a, b,i) => {
@@ -20,8 +29,14 @@ class Swiper extends Component {
       return a;
     }, {})
 
+    this.setState({obj, list})
+
+  }
+
+  render() {
+
     return (
-      <div className={`page-home-swiper-render num-${list.length}`} {...obj}  /> 
+      <div className={`page-home-swiper-render num-${this.state.list.length}`} {...this.state.obj}  /> 
     );
   }
 }
