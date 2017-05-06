@@ -7,6 +7,9 @@ $fps: $time * 30;
 $waveCover: white;
 
 .page-home-wave-render{
+  height: 100vh;
+  background-color: white;
+  
   &:before{
     content: '努力加载中···';
     width: 1em;

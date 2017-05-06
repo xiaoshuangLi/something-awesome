@@ -1,4 +1,80 @@
 @import "frontend/css/func.scss";
 
 .page-home-beauty-render{
+  height: 100vh;
+  padding: 60px 10px 10px;
+  background: #efefef;
+
+  .control{
+    top: 0;
+    margin: 10px;
+    transition: .2;
+    width: 40px;
+    height: 40px;
+    box-shadow: 1px 1px 5px #ddd;
+    border-radius: 10px;
+
+    @extend %fixed;
+    @extend %bgwhite;
+
+    &, &:before{
+      transition: .2s;
+    }
+
+    &:before{
+      content: '';
+      width: 10px;
+      height: 10px;
+      background: #aaa;
+
+      @extend %percenter;
+      @extend %border-radius-50;
+    }
+
+    &.active{
+      background-color: #ff7878;
+
+      &:before{
+        background: rgba(255,255,255,.8);
+      }
+    }
+  }
+
+  .list{
+    @extend %tcenter;
+
+    * {
+      @extend %block;
+    }
+
+    .title{
+
+      &+.item{
+        margin-top: 10px;
+      }
+    }
+
+    .item{
+      margin-top: 20px;
+      padding: 5px;
+      border-radius: 5px;
+      box-shadow: 1px 1px 5px #ddd;
+      transition: .2s;
+
+      @extend %bgwhite;
+
+      &:active, &.active{
+        opacity: .4;
+      }
+
+      &:after{
+        content: attr(data-after);
+        margin-left: 5px;
+        font-size: 12px;
+        opacity: .7;
+
+        @extend %inline-block;
+      }
+    }
+  }
 }
