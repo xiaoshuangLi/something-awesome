@@ -7,11 +7,12 @@ $total: length($list);
 
 $num: 11;
 $time: 1;
-$stop: 1;
+$stop: 3;
 $fpsPer: 30;
 $fpsPerPic: $fpsPer * $time;
 
-$titleAheadFps: $fpsPer/3;
+$aheadFps: $fpsPer/3;
+$aniTime: 0.2;
 
 $single: $time + $stop;
 $ratio: $time/$single;
@@ -27,7 +28,7 @@ $shadowR: 2.5px;
 $shadowDistance: 15px;
 
 @function getSpot($i: 1, $num: 0) {
-  $x: 0px - $i * $shadowDistance;
+  $x: (0 - $total + $i) * $shadowDistance;
   $color: rgba(255,255,255, .5);
 
   @if $i == $num + 1 {
@@ -108,6 +109,7 @@ body{
       background-position: getBgsPosition();
 
       animation: getName('swiper-', $total) #{$all * 1s} linear infinite;
+      // animation: getName('title-', $total) #{$all * 1s} linear infinite;
 
       &:before, &:after{
         content: '';
@@ -208,26 +210,45 @@ body{
 
 
       @if $i % $fpsPerPic == 0{
-        $eachEnd: $init + $stop/$all - $titleAheadFps/$fps;
+        $eachEnd: $init + $stop/$all - $aheadFps/$fps;
         $perEachEnd: percentage($eachEnd);
 
+        $justEnd: $init + $aniTime/$all;
+        $nearStart: $justEnd + $aniTime/$all;
+        $perJustEnd: percentage($justEnd);
+        $perNearStart: percentage($nearStart);
+
         #{$perStep} {
+          opacity: 1;
           content: getContent($num - 1);
         }
 
-        #{$perEachEnd}{
-          content: getContent($num);
+        @if $num < $total - 1 {
+          #{$perJustEnd} {
+            opacity: 0;
+          }
+
+          #{$perNearStart}, #{$perEachEnd} {
+            opacity: 1;
+            content: getContent($num);
+          }
         }
       }
 
-      $lastTitleEnd: 1 - $titleAheadFps/$fps;
+      $lastTitleEnd: 1 - $stop/$all;
+      $lastTitleEndJsut: $lastTitleEnd + $aniTime/$all;
+      $lastTitleEndNear: $lastTitleEndJsut + $aniTime/$all;
       $perLastTitleEnd: percentage($lastTitleEnd);
+      $perLastTitleEndJust: percentage($lastTitleEndJsut);
+      $perLastTitleEndNear: percentage($lastTitleEndNear);
 
-      #{ $perLastTitleEnd } {
-        content: getContent(0);
+
+      #{ $perLastTitleEndJust } {
+        opacity: 0;
       }
 
-      100% {
+      #{ $perLastTitleEndNear }, 100% {
+        opacity: 1;
         content: getContent(0);
       }
     }
@@ -258,26 +279,33 @@ body{
 
 
       @if $i % $fpsPerPic == 0{
-        $eachEnd: $init + $stop/$all - $titleAheadFps/$fps;
+        $eachEnd: $init + $stop/$all - $aheadFps/$fps;
         $perEachEnd: percentage($eachEnd);
+
+        $justEnd: $init + $aniTime/$all;
+        $nearStart: $justEnd + $aniTime/$all;
+        $perJustEnd: percentage($justEnd);
+        $perNearStart: percentage($nearStart);
 
         #{$perStep} {
           box-shadow: getSpots($num - 1);
         }
 
-        #{$perEachEnd}{
-          box-shadow: getSpots($num);
+        @if $num < $total - 1 {
+          #{$perJustEnd}, #{$perNearStart}, #{$perEachEnd} {
+            box-shadow: getSpots($num);
+          }
         }
       }
 
-      $lastTitleEnd: 1 - $titleAheadFps/$fps;
+      $lastTitleEnd: 1 - $stop/$all;
+      $lastTitleEndJsut: $lastTitleEnd + $aniTime/$all;
+      $lastTitleEndNear: $lastTitleEndJsut + $aniTime/$all;
       $perLastTitleEnd: percentage($lastTitleEnd);
+      $perLastTitleEndJust: percentage($lastTitleEndJsut);
+      $perLastTitleEndNear: percentage($lastTitleEndNear);
 
-      #{ $perLastTitleEnd } {
-        box-shadow: getSpots(0);
-      }
-
-      100% {
+      #{ $perLastTitleEndJust }, #{ $perLastTitleEndNear }, 100% {
         box-shadow: getSpots(0);
       }
     }
