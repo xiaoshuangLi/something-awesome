@@ -1,20 +1,59 @@
 @import "frontend/css/func.scss";
 
-$list: ('./ed.jpeg', './cave.jpeg', './bluesky.jpeg');
+$list: ('./ed.jpeg', './cave.jpeg', './bluesky.jpeg'); //bluesky图片解码影响页面css渲染
+$list: ('./ed.jpeg', './cave.jpeg', './fight.jpg');
 $list: append($list, nth($list, 1), comma);
 $total: length($list);
 
 $num: 11;
-$time: 2;
-$stop: 2;
+$time: 1;
+$stop: 1;
 $fpsPer: 30;
 $fpsPerPic: $fpsPer * $time;
-$fps: $fpsPerPic * $total;
+
+$titleAheadFps: $fpsPer/3;
 
 $single: $time + $stop;
-$all: $single * $total;
 $ratio: $time/$single;
 
+$all: $single * ($total - 1);
+$fps: $fpsPerPic * ($total - 1);
+
+$width: 100vw;
+$margin: 10px;
+$border: 4px;
+$radius: 5px;
+$shadowR: 2.5px;
+$shadowDistance: 15px;
+
+@function getSpot($i: 1, $num: 0) {
+  $x: 0px - $i * $shadowDistance;
+  $color: rgba(255,255,255, .5);
+
+  @if $i == $num + 1 {
+    $color: rgba(255,255,255, 1);
+  }
+
+  @return $x 0 0px $shadowR $color;
+}
+
+@function getSpots($num: 0) {
+  $res: ();
+
+  @for $i from 1 through $total - 1 {
+    $res: append($res, getSpot($i, $num), comma);
+  }
+
+  @return $res;
+}
+
+@function getContent($num: 1){
+  @return attr(getName('data-title-', $num));
+}
+
+@function getName($name: 'swiper-', $num: 1) {
+  @return #{$name + inspect($num)};
+}
 
 @function getBg($i: 0) {
   @return url(nth($list, $i));
@@ -32,16 +71,16 @@ $ratio: $time/$single;
 
 @function getBgPosition($i: 1, $step: 0) {
   $i: $i - 1;
-  $curr: $step * $total;
+  $curr: $step * ($total - 1);
   $i: ($i - $curr);
 
-  @return calc(#{100vw * $i} - #{28px * $i}) 0%;
+  @return calc(#{$width * $i} - #{($border + $margin) * $i * 2}) 0%;
 }
 
 @function getBgsPosition($step: 0){
   $res: ();
 
-  @for $i from 1 through length($list) {
+  @for $i from 1 through $total {
     $res: append($res, getBgPosition($i, $step), comma);
   }
 
@@ -53,26 +92,65 @@ body{
 }
 
 .page-home-swiper-render{
-  margin: 10px;
+  margin: $margin;
   padding-bottom: 60%;
-  border: 4px solid white;
-  border-radius: 5px;
+  border: $border solid white;
+  border-radius: $radius;
   background-size: cover;
   background-repeat: no-repeat;
   box-shadow: 1px 1px 5px #999;
+
+  @extend %relative;
 
   @for $i from 1 through $num {
     &.num-#{$i} {
       background-image: getBgs();
       background-position: getBgsPosition();
 
-      animation: #{'swiper-' + inspect($total)} #{$all * 1s} linear infinite;
+      animation: getName('swiper-', $total) #{$all * 1s} linear infinite;
+
+      &:before, &:after{
+        content: '';
+
+        @extend %inline-block;
+        @extend %absolute;
+      }
+
+      &:before{
+        content: getContent(0);
+        margin: 5px 10px;
+        font-size: 12px;
+        text-shadow: 1px 1px 5px #333;
+
+        animation: getName('title-', $total) #{$all * 1s} linear infinite;
+
+        @extend %fwhite;
+      }
+
+      &:after{
+        content: '';
+        width: 2px;
+        height: 2px;
+        background: transparent;
+        right: 0px;
+        bottom: 10px;
+        box-shadow: getSpots();
+        animation: getName('spot-', $total) #{$all * 1s} linear infinite;
+
+        @extend %fwhite;
+        @extend %border-radius-50;
+      }
     }
   }
 }
 
 @for $i from 1 through $num {
-  @keyframes #{'swiper-' + inspect($total)} {
+  @keyframes #{getName('swiper-', $num + 1)} {
+
+    0%{
+      background-position: getBgsPosition(0);
+    }
+
     @for $i from 1 through $fps {
       $step: $i / $fps;
       $beforeTime: $i / $fpsPerPic;
@@ -81,11 +159,8 @@ body{
       @if $before == 0{
         $before: 0;
       } 
-      @else if $before == 1{
-        $before: $time;
-      }
-      @else if $before > 1{
-        $before: $time * $before + $stop * ($before - 1);
+      @else {
+        $before: $stop * ($before - 1);
       }
 
       $before: $before/$all;
@@ -94,22 +169,116 @@ body{
       $perStep: percentage($init);
 
       @if $i % $fpsPerPic == 0{
-        $eachEnd: $init - $time/$all;
-        $eachEndHalf: $init - $time/($all * 2);
+        $eachEnd: $init + $stop/$all;
         $perEachEnd: percentage($eachEnd);
-        $perEachEndHalf: percentage($eachEndHalf);
 
-        #{$perEachEnd} {
+        #{$perStep} {
           background-position: getBgsPosition($step);
         }
 
-        #{$perEachEndHalf} {
+        #{$perEachEnd}{
           background-position: getBgsPosition($step);
         }
       }
+    }
+  }
 
-      #{$perStep} {
-        background-position: getBgsPosition($step);
+  @keyframes #{getName('title-', $num + 1)} {
+    0%{
+      content: getContent(0);
+    }
+
+    @for $i from 1 through $fps {
+      $step: $i / $fps;
+      $beforeTime: $i / $fpsPerPic;
+      $num: floor($beforeTime);
+      $before: $num;
+
+      @if $before == 0{
+        $before: 0;
+      } 
+      @else {
+        $before: $stop * ($before - 1);
+      }
+
+      $before: $before/$all;
+
+      $init: $step*$ratio + $before;
+      $perStep: percentage($init);
+
+
+      @if $i % $fpsPerPic == 0{
+        $eachEnd: $init + $stop/$all - $titleAheadFps/$fps;
+        $perEachEnd: percentage($eachEnd);
+
+        #{$perStep} {
+          content: getContent($num - 1);
+        }
+
+        #{$perEachEnd}{
+          content: getContent($num);
+        }
+      }
+
+      $lastTitleEnd: 1 - $titleAheadFps/$fps;
+      $perLastTitleEnd: percentage($lastTitleEnd);
+
+      #{ $perLastTitleEnd } {
+        content: getContent(0);
+      }
+
+      100% {
+        content: getContent(0);
+      }
+    }
+  }
+
+  @keyframes #{getName('spot-', $num + 1)} {
+    0%{
+      box-shadow: getSpots(0);
+    }
+
+    @for $i from 1 through $fps {
+      $step: $i / $fps;
+      $beforeTime: $i / $fpsPerPic;
+      $num: floor($beforeTime);
+      $before: $num;
+
+      @if $before == 0{
+        $before: 0;
+      } 
+      @else {
+        $before: $stop * ($before - 1);
+      }
+
+      $before: $before/$all;
+
+      $init: $step*$ratio + $before;
+      $perStep: percentage($init);
+
+
+      @if $i % $fpsPerPic == 0{
+        $eachEnd: $init + $stop/$all - $titleAheadFps/$fps;
+        $perEachEnd: percentage($eachEnd);
+
+        #{$perStep} {
+          box-shadow: getSpots($num - 1);
+        }
+
+        #{$perEachEnd}{
+          box-shadow: getSpots($num);
+        }
+      }
+
+      $lastTitleEnd: 1 - $titleAheadFps/$fps;
+      $perLastTitleEnd: percentage($lastTitleEnd);
+
+      #{ $perLastTitleEnd } {
+        box-shadow: getSpots(0);
+      }
+
+      100% {
+        box-shadow: getSpots(0);
       }
     }
   }
