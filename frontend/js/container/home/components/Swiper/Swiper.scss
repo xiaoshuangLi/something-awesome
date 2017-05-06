@@ -174,11 +174,7 @@ body{
         $eachEnd: $init + $stop/$all;
         $perEachEnd: percentage($eachEnd);
 
-        #{$perStep} {
-          background-position: getBgsPosition($step);
-        }
-
-        #{$perEachEnd}{
+        #{$perStep}, #{$perEachEnd} {
           background-position: getBgsPosition($step);
         }
       }
