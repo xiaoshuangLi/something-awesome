@@ -1,9 +1,4 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router';
-
-import io from 'socket.io-client';
-
-const socket = io('http://192.168.13.132:8000');
+import React, { Component, PropTypes } from 'react';
 
 const list = [
   {
@@ -40,7 +35,9 @@ class Beauty extends Component {
   }
 
   componentDidMount() {
-
+    const { socket } = this.context;
+    
+    socket.off('go');
     socket.on('go', (path) => {
       const { control, list } = this.state;
 
@@ -65,7 +62,7 @@ class Beauty extends Component {
     const items = (items = []) => {
       return items.map((item, i) => {
         return (
-          <div onClick={() => { socket.emit('go', item.path) }} className={`item ${item.selected?'active':''}`} key={i} data-after={item.desc}>
+          <div onClick={() => { this.context.socket.emit('go', item.path) }} className={`item ${item.selected?'active':''}`} key={i} data-after={item.desc}>
             {item.title}
           </div>
         );
@@ -89,5 +86,9 @@ class Beauty extends Component {
     );
   }
 }
+
+Beauty.contextTypes = {
+  socket: PropTypes.object
+};
 
 export default Beauty;

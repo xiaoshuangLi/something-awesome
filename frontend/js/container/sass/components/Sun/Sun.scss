@@ -1,27 +1,31 @@
 @import "frontend/css/func.scss";
 
 $img: './beach.svg';
-$sunR: 12px;
-$cover: white;
+// 先看星的部分
+$num: 60; // 星的数量
+$time: 10; // 星的动画时间
+$fps: $time * 30; // 星的总帧数 也就是 10 * 30， 300 帧
+// 星是有一个闪烁的效果，所以要规定闪烁的透明度范围
+$minOpacity: 0.15; // 这里闪烁的最小透明度 是 0.15
+$maxOpacity: 0.55; // 最大透明度 是 0.55
+$opacityRange: ($maxOpacity - $minOpacity) * 2; // 透明度变化区间，这里方便以后计算而存储的变量，计算结果是 0.8
+$moveDistance: 7; // 闪烁时移动距离
 
-$num: 60;
-$time: 10;
-$fps: $time * 30;
-$minOpacity: 0.15;
-$maxOpacity: 0.55;
-$opacityRange: ($maxOpacity - $minOpacity) * 2;
-$moveDistance: 7;
-
+// 为了可以实现星空闪烁的效果，我们生成的时候采取随机生成每个星的基本样式，有一定的范围取值。
+// 这里生成的数据主要有x坐标， y坐标，shadow阴影的范围，星的宽度，移动距离的倍数，x轴移动的方向，y轴移动的方向
+// 这里看下，有没有什么疑问的。
 @function setStar{
   @return (random(100) * 1vw, random(40) * 1vh, random(5) * 1px + 2px, random($maxOpacity * 100)/100, random(2), random(2), random(2))
 }
 
+// 首先需要遍历生成所有星星储存在数组里。 然后开始定义星的动画。这里就是一个循环。
 $stars: ();
 @for $i from 1 through $num{
   $star: setStar();
   $stars: append($stars, $star);
 }
 
+// 星的透明度
 @function getStarOpacity($opacity, $step) {
   $res: $opacityRange * $step + $opacity;
 
@@ -36,6 +40,7 @@ $stars: ();
   @return $res;
 }
 
+// 星的x轴左边
 @function getStarX($x, $step, $rand, $randDistance) {
   @if $rand > 1.5 {
     $rand: -1 * $rand;
@@ -47,6 +52,7 @@ $stars: ();
   @return $res;
 }
 
+// 星的y轴左边
 @function getStarY($y, $step, $rand, $randDistance) {
   @if $rand > 1.5 {
     $rand: -1 * $rand;
@@ -58,6 +64,9 @@ $stars: ();
   @return $res;
 }
 
+// 最后就是计算星的坐标以及透明度。没有问题的话我们再看流星生成的经过。
+// 有问题的话，赶快提出来，憋着伤肾。
+// 生成经过都是大同小异，要是感觉重复可以跳过到下一个示例。
 @function getStar($star, $step){
   $x: getStarX(nth($star, 1), $step, nth($star, 5), nth($star, 7));
   $y: getStarY(nth($star, 2), $step, nth($star, 5), nth($star, 6));
@@ -66,6 +75,7 @@ $stars: ();
   @return $x $y 2px  nth($star, 3) rgba(255,255,255, $opacity) ;
 }
 
+// 然后这里遍历生成所有星的动画样式
 @function getStars($step: 0){
   $starsShadow: ();
 
@@ -76,22 +86,23 @@ $stars: ();
   @return $starsShadow;
 }
 
-$fireStone: 3;
-$fireTime: 1.5;
-$fireFps: $time * 30;
-// $offset: 10vw;
+$fireTime: 1.5; // 流星的动画时间
+$fireFps: $time * 30; // 流星的动画总帧数
 
-$width: 3px;
-$fireDistance: 0.15;
-$length: 150;
-$start: 120vw;
-$long: 60;
-$ratio: 5;
+$width: 3px; // 流星最前面的宽度，一般流星的话都是前面最大最亮。
+$length: 150; // 组成流星的点的数量
+$fireDistance: 0.15; // 每个流星点之间的间隔0.15，单位x轴为vw，y轴为vh
+$start: 70vw; // 流星的起点x轴坐标是 70 vw，原点是屏幕的左上角, y轴坐标设置为0，这里也就没有定义变量了。
+$long: 60; // 流星的运行轨迹的长度，单位也是根据x,y轴进行区分。
+$ratio: 5; // 流星width/height 宽高的比例 5vw : 1vh;
 
 @function getFireStone($step, $i){
-  $x: $start - 50vw + $i * $fireDistance * 1vw * $ratio - 1vw * $step * $long * $ratio;
+  // 这里根据每个点的索引值（i: 1,2,3,4....）配合点的间距来计算每个点在流星中所处的位置，然后根据所处帧数来偏移每个点。
+  $x: $start + $i * $fireDistance * 1vw * $ratio - 1vw * $step * $long * $ratio;
   $y: 0vh - $i * $fireDistance * 1vh + 1vh * $step * $long;
   $posi: $i / $length;
+
+  // 根据帧数来计算流星的透明度，毕竟流星最后还是会消失的。以上就是这个页面动画效果的编写，还有什么提问的吗？没有的话还有下一个示例。
   $opacity: (1 -  $posi) * 0.8 * (1 - $step);
 
   @return $x $y 1px (1 - $posi) * $width rgba(255, 255, 255, $opacity);
@@ -141,8 +152,9 @@ $ratio: 5;
   }
 }
 
+// 这里和上个示例一样，通过帧来确定每一帧的动画效果。
 @keyframes starShiny{
-  @for $i from 1 through $fps {
+  @for $i from 0 through $fps {
     $step: $i / $fps;
     $perStep: percentage($step);
 
@@ -153,7 +165,7 @@ $ratio: 5;
 }
 
 @keyframes fireStoneFly{
-  @for $i from 1 through $fireFps {
+  @for $i from 0 through $fireFps {
     $step: $i / $fireFps;
     $perStep: percentage($step);
 

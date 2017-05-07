@@ -171,3 +171,43 @@ export function getEles(selector) {
 
   return document.querySelectorAll(selector);
 }
+
+const styles = {
+  title: 'font-size: 18px; color: #666; font-weight: bold; text-align: center;',
+  normal: 'text-indent: 28px; font-size: 12px; color: #666;',
+  desc: 'font-size: 12px; color: #bbb;',
+}
+
+export function logCus(txt = '', type = 'normal') {
+  if(type === 'normal') {
+    txt = `  ${txt}`;
+  }
+
+  if(type === 'desc') {
+    txt = `  (${txt})`;
+  }
+
+  console.log(`%c${txt}`, styles[type] || type);
+}
+
+const line = [ '', '|', '| -', '| - -', '| - - -', '我', '是', '一', '条', '分', '割', '线', '| - - -', '| - -', '| -', '|', ''];
+
+export function logSpeech(speech = [], notClear = false) {
+  !notClear && console.clear();
+  const types = Object.keys(styles);
+
+  speech.forEach((item, i) => {
+    if(item === 'line') {
+      return logSpeech(line, true);
+    }
+
+    if(typeof item === 'string') {
+      item = {
+        txt: item,
+        type: i === 0 ? 'title' : 'normal',
+      };
+    }
+
+    logCus(item.txt, item.type);
+  });
+}
