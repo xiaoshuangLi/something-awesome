@@ -1,10 +1,35 @@
 @import "frontend/css/func.scss";
 
-$r: 110;
-$num: 5;
-$time: 5;
-$fps: $time * 30;
-$waveCover: white;
+$r: 110; //波纹的半径
+$num: 5; //同时存在的波纹数量
+$time: 5; //动画时长
+$fpsPer: 30; //动画每秒的帧数。
+$fps: $time * $fpsPer; //播放动画需要的总帧数，5 乘以 30 也就是 150
+$waveCover: white; //背景色
+
+// 让我们看下是如何生成动画的。
+
+@function getShadow($distance) {
+  $ratio: $distance / $r; // 这里计算的是距离与半径的比例，0 到 1；0 代表在原点位置，1代表已经到达最远距离，就是我们设置的半径。
+  $shadowWidth: 1px + 6px * $ratio; // 每条波纹的阴影宽度，我的想法是越远的话阴影越宽。
+  $shadowColorOpacity: 0.25 * (1 - $ratio); // 每条波纹的透明度，当到达最远距离的时候就消失，透明度为0。
+  
+  // 这里就是计算的结果。如你所见波纹效果就有了。
+  @return 0 0 0 #{$distance - 0.5px} $waveCover, 0 0 $shadowWidth $distance * 1px rgba(0,0,0, $shadowColorOpacity);
+}
+
+@function getShadows($step: 1) {
+  $list: (); // 首先，我们定义一个数组来储存计算的结果
+
+  @for $i from 1 through $num { // 然后这个for循环遍历我们需要生成的波纹数量。
+    $average: $r / $num; // 这里计算的是波纹之间的平均间隔。
+    $distance: $average * ($i - 1 + $step); // 这里计算的是波纹距离原点的距离。
+
+    $list: append($list, getShadow($distance), comma); // 将计算的结果储存到数组，并以逗号隔开，comma。
+  }
+
+  @return $list; // 并返回计算结果，没有疑问的话， 再看看生成单个 波纹样式的 函数
+}
 
 .page-home-wave-render{
   height: 100vh;
@@ -34,6 +59,7 @@ $waveCover: white;
     left: 50%;
     background-color: transparent;
     transform: rotateX(70deg);
+    box-shadow: getShadows();
     animation: shadowWave #{$time / $num * 1s} infinite ease-out;
 
     @extend %absolute;
@@ -42,34 +68,28 @@ $waveCover: white;
   }
 }
 
-@function getShadow($distance) {
-  $step: $distance / $r;
-  $shadowWidth: 1px + 6px * $step;
-  $shadowColorOpacity: 0.25 * (1 - $step);
-
-  @return 0 0 0 #{$distance - 0.5px} $waveCover, 0 0 $shadowWidth $distance * 1px rgba(0,0,0, $shadowColorOpacity);
-}
-
-@function getShadows($step) {
-  $list: ();
-
-  @for $i from 1 through $num {
-    $average: $r / $num;
-    $distance: $average * ($i - 1 + $step);
-
-    $list: append($list, getShadow($distance), comma);
-  }
-
-  @return $list;
-}
-
 @keyframes shadowWave{
-  @for $i from 1 through $fps {
-    $step: $i / $fps;
-    $perStep: percentage($step);
+  // 首先定义一个for循环来计算每一帧的样式效果。
+  @for $i from 0 through $fps { 
+    $step: $i / $fps; // 计算得到每一帧在动画里面的进程 0 到 1
+    // 由于 animation 是 0% 到 100%；所以我们必须要 将数字转换为 百分比，下面这样
+    $perStep: percentage($step); // 数字转换百分比
+    // 注意一点 转换百分比的这个函数，不会念，有个坑。直接传数字会报错，类似这样percentage(0.2);所以必须把值赋给一个变量传进去。
 
     #{$perStep} {
       box-shadow: getShadows($step);
     }
   }
+
+  // 计算过程类似这样
+  // $i: 30 // 首先我们的到 i 等于 30, 也就是当前的位置在 第30帧
+  // $step: 30/150; => 0.2 // 然后我们的到进程为0.2
+  // $perStep: 20%; // 转换为百分比就是20%， 结果就是这样
+  //
+  // 20% {
+  //  box-shadow: getShadows(30); // 我们将当前的进程，第30帧，传到写好的计算function 里面来得到应有的样式属性。
+  // }
+  // 到这里有哪些疑问或者不明白的地方吗。
+  // waiting .....
+  // 下面来看我们生成样式的函数。
 }

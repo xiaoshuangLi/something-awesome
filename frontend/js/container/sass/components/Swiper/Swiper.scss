@@ -1,31 +1,48 @@
 @import "frontend/css/func.scss";
 
-$list: ('./ed.jpeg', './cave.jpeg', './bluesky.jpeg'); //bluesky图片解码影响页面css渲染
-$list: ('./ed.jpeg', './cave.jpeg', './fight.jpg');
-$list: append($list, nth($list, 1), comma);
-$total: length($list);
+$list: ('./ed.jpeg', './cave.jpeg', './bluesky.jpeg'); //大图片，bluesky图片解码影响页面css渲染，导致动画卡顿，这里过会再演示，如果我还记得。
+$list: ('./ed.jpeg', './cave.jpeg', './fight.jpg'); // 一个数组储存滚动的三张图片。
+$list: append($list, nth($list, 1), comma); // 为了实现轮播的效果，必须要在数组尾部插入第一张图片，具体可见swiper组件
+$total: length($list); // 图片的总数量，包括插入的最后一张图，3张图需要轮播，插入一张的到的结果就是4
 
-$num: 11;
-$time: 1;
-$stop: 1;
-$fpsPer: 30;
-$fpsPerPic: $fpsPer * $time;
+$num: 11; // 最大支持的轮播图数量，保持插入的图，这里设定的是11张图，也就是10张不一样的图片。
+$move: 1; // 切换到下一张图所需要的时间，我们设定为一秒
+$stop: 1; // 图片静止显示的时间，也就是距离下次切换的时间
+$fpsPer: 30; 
+$fpsPerPic: $fpsPer * $move; // 每张图片的动画帧数 move * fpsPer
 
-$aheadFps: $fpsPer/3;
-$aniTime: 0.2;
+$aheadFps: $fpsPer/3; // 标题,和右下进程变化的提前帧数，根据实际开发，这里的动态效果需要提前一点，不然会有点延迟的感觉。
+$aniTime: 0.2; // 标题,和右下进程动画效果所需的时间
 
-$single: $time + $stop;
-$ratio: $time/$single;
+// 这里我们需要明确一下整个动画的过程，不明白的话无法进行下一步的样式计算。
+// a,b,c 首先有三张图
+// a,b,c,a 插入之后的数组，也就是把 第一张图 a 插入到数组尾部
 
-$all: $single * ($total - 1);
-$fps: $fpsPerPic * ($total - 1);
+//   a   ===>   b   ===>   c   ===>   a   完整动画过程
+//       move       move       move 
+//             stop       stop       stop
 
-$width: 100vw;
-$margin: 10px;
-$border: 4px;
-$radius: 5px;
-$shadowR: 2.5px;
-$shadowDistance: 15px;
+// 必要的话可以上前画图演示
+
+$single: $move + $stop; // 从开始移动到一张图片静止显示完成的时间。
+$ratio: $move/$single; // 移动时间占总时间的比例，方便计算每帧的属性而储存
+
+$all: $single * ($total - 1); // 动画总时间 由上图可以知道，尽管我们有四张图片在数组里面，但是我们只有三个完整的单图移动到静止结束的过程，由此来计算
+$fps: $fpsPerPic * ($total - 1); // 动画总帧数，每张图片的动画帧数乘以图片数量
+
+// 以上有什么疑问的吗，这里必须要明白的比较透彻，不然接下来的计算只能说是在听天书了。
+
+$width: 100vw; // 父级宽度
+$margin: 10px; // 两边的间隔
+$border: 4px; // 边框的宽度
+
+// 上面的三个值在接下来计算很重要
+
+$radius: 5px; // 圆角
+$shadowR: 2.5px; // 右下进度的阴影半径
+$shadowDistance: 15px; // 右下进度每个点的间隔
+
+// 下面看一下动画生成的过程
 
 @function getSpot($i: 1, $num: 0) {
   $x: (0 - $total + $i) * $shadowDistance;
@@ -48,10 +65,12 @@ $shadowDistance: 15px;
   @return $res;
 }
 
+//获取左上content, $num 当前为第几张图， 相当于把数字和字符串拼接为一个字符串返回。
 @function getContent($num: 1){
   @return attr(getName('data-title-', $num));
 }
 
+//拼接字符串
 @function getName($name: 'swiper-', $num: 1) {
   @return #{$name + inspect($num)};
 }
@@ -60,6 +79,7 @@ $shadowDistance: 15px;
   @return url(nth($list, $i));
 }
 
+// 生成background-image
 @function getBgs{
   $res: ();
 
@@ -71,13 +91,16 @@ $shadowDistance: 15px;
 }
 
 @function getBgPosition($i: 1, $step: 0) {
-  $i: $i - 1;
-  $curr: $step * ($total - 1);
-  $i: ($i - $curr);
+  $i: $i - 1; // 第一张的位置为0
+  $curr: $step * ($total - 1); // 移动了几张图片
+  $i: ($i - $curr); // 由于动画是向左移动，根据backgroun-position属性向左移动是减
 
+  // 下面就是计算的方式，没有疑问我们分析左上title；
+  
   @return calc(#{$width * $i} - #{($border + $margin) * $i * 2}) 0%;
 }
 
+// 简单的遍历我就不说了。
 @function getBgsPosition($step: 0){
   $res: ();
 
@@ -149,29 +172,32 @@ body{
 @for $i from 1 through $num {
   @keyframes #{getName('swiper-', $num + 1)} {
 
-    0%{
-      background-position: getBgsPosition(0);
-    }
+    @for $i from 0 through $fps {
+      $step: $i / $fps; // 第一步永远是一样的取当前所在的帧数
+      $beforeTime: $i / $fpsPerPic; // 然后判断滚动到第几张图片，当前的帧数除以每张图片动画的帧数
+      $before: floor($beforeTime); // 取整
 
-    @for $i from 1 through $fps {
-      $step: $i / $fps;
-      $beforeTime: $i / $fpsPerPic;
-      $before: floor($beforeTime);
+      //这里需要注意一点，fps尽管时间乘以每秒的帧数，但是不包括图片静止的时间，stop.
 
-      @if $before == 0{
+      @if $before == 0 { 
         $before: 0;
       } 
       @else {
         $before: $stop * ($before - 1);
       }
 
-      $before: $before/$all;
+      $before: $before/$all; //before意义在于得到图片静止花费的总时间，根据图来分析
 
-      $init: $step*$ratio + $before;
+      $init: $step*$ratio + $before; // 图片切换花费的时间 + 图片静止的时间，也就是刚刚结束图片刚刚结束滚动的时间，根据图来分析
       $perStep: percentage($init);
 
-      @if $i % $fpsPerPic == 0{
-        $eachEnd: $init + $stop/$all;
+      // 这里的取余数为0，有两个目的。
+      // 1.是为了减少css代码的生成，因为这种变化是匀速的。 只需要记录变化开始和结束的点就可以了，不知道大家有没有听明白。
+      // 2.当余数为0，意味着一个图片刚好结束滚动动画移动。即动画结束的点，再加上图片静止的时间便是动画开始的点。
+      // 没疑问的话，继续来看生成的function。有问题请务必提出来。
+
+      @if $i % $fpsPerPic == 0{ 
+        $eachEnd: $init + $stop/$all; // 
         $perEachEnd: percentage($eachEnd);
 
         #{$perStep}, #{$perEachEnd} {
@@ -182,14 +208,11 @@ body{
   }
 
   @keyframes #{getName('title-', $num + 1)} {
-    0%{
-      content: getContent(0);
-    }
-
-    @for $i from 1 through $fps {
+    // 这里的计算和图片滚动大致是一个过程，毕竟这是根据滚动来响应的变化
+    @for $i from 0 through $fps {
       $step: $i / $fps;
       $beforeTime: $i / $fpsPerPic;
-      $num: floor($beforeTime);
+      $num: floor($beforeTime); // 不同的是, 记录下移动到第几张图, 来确定应该显示哪个标题
       $before: $num;
 
       @if $before == 0{
@@ -209,21 +232,26 @@ body{
         $eachEnd: $init + $stop/$all - $aheadFps/$fps;
         $perEachEnd: percentage($eachEnd);
 
-        $justEnd: $init + $aniTime/$all;
-        $nearStart: $justEnd + $aniTime/$all;
+        // 这里是切换的动画效果
+        $justEnd: $init + $aniTime/$all; // 刚刚滚动停止之后的aniTime，即0.2秒
+        $nearStart: $justEnd + $aniTime/$all;  // 刚刚滚动停止之后的aniTime * 2，即0.4秒, 这段时间之内就是title变化的动画
         $perJustEnd: percentage($justEnd);
         $perNearStart: percentage($nearStart);
 
         #{$perStep} {
           opacity: 1;
-          content: getContent($num - 1);
+          content: getContent($num - 1); // 这里看下生成的函数
         }
 
         @if $num < $total - 1 {
+          // 首先justEnd时，将标题的透明度变为0；
           #{$perJustEnd} {
             opacity: 0;
           }
 
+          // 然后到nearStart，切换标题的同时将透明度变为1；
+          // 右下角的滚动进程和标题原理相似，这里不做分析，如果有什么不懂的可以以后问我。
+          // 标题函数
           #{$perNearStart}, #{$perEachEnd} {
             opacity: 1;
             content: getContent($num);
@@ -251,11 +279,7 @@ body{
   }
 
   @keyframes #{getName('spot-', $num + 1)} {
-    0%{
-      box-shadow: getSpots(0);
-    }
-
-    @for $i from 1 through $fps {
+    @for $i from 0 through $fps {
       $step: $i / $fps;
       $beforeTime: $i / $fpsPerPic;
       $num: floor($beforeTime);
