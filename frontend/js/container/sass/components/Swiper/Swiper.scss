@@ -126,6 +126,12 @@ body{
 
   @extend %relative;
 
+  &:hover, &.hover{
+    &, &:before, &:after{
+      animation-play-state: paused;
+    }
+  }
+
   @for $i from 1 through $num {
     &.num-#{$i} {
       background-image: getBgs();
@@ -165,6 +171,12 @@ body{
         @extend %fwhite;
         @extend %border-radius-50;
       }
+    }
+  }
+
+  &:hover, &.hover{
+    &, &:before, &:after{
+      animation-play-state: paused;
     }
   }
 }
