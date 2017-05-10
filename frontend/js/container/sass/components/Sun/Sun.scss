@@ -72,7 +72,8 @@ $stars: ();
   $y: getStarY(nth($star, 2), $step, nth($star, 5), nth($star, 6));
   $opacity: getStarOpacity(nth($star, 4), $step);
 
-  @return $x $y 2px  nth($star, 3) rgba(255,255,255, $opacity) ;
+  @return $x $y 3px rgba(white, $opacity) ;
+  // @return $x $y 2px nth($star, 3) rgba(white, $opacity) ;
 }
 
 // 然后这里遍历生成所有星的动画样式
@@ -138,14 +139,22 @@ $ratio: 5; // 流星width/height 宽高的比例 5vw : 1vh;
   }
 
   &:after{
-    content: '';
+    font-family: "afanti-iconfont" !important;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-stroke-width: 0.2px;
+    -moz-osx-font-smoothing: grayscale;
+
+    content: '\e621';
+    color: transparent;
     width: 2px;
     height: 2px;
+    font-size: 13px;
     top: 0;
     left: 0;
     background: transparent;
     animation: starShiny #{ $time * 1s } infinite ease-in-out;
-    box-shadow: getStars();
+    text-shadow: getStars();
 
     @extend %border-radius-50;
     @extend %absolute;
@@ -159,7 +168,7 @@ $ratio: 5; // 流星width/height 宽高的比例 5vw : 1vh;
     $perStep: percentage($step);
 
     #{$perStep} {
-      box-shadow: getStars($step);
+      // text-shadow: getStars($step);
     }
   }
 }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { logSpeech } from 'js/common';
+import Iconfont from 'js/components/Iconfont';
 
 class Sun extends Component {
 	componentDidMount() {

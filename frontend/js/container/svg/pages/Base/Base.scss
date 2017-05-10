@@ -1,0 +1,159 @@
+@import "frontend/css/func.scss";
+
+$bg: "/img/200ff932badfa75816aa7f06015f0c87.jpeg";
+$time: 8;
+
+.page-home-base-render{
+  .img{
+    width: 120%;
+    height: 120%;
+    left: -10%;
+
+    @include bg(cover, $bg, 50%, 0%);
+    @extend %inline-block;
+    @extend %absolute;
+  }
+
+  .top, .bottom{
+    height: 50vh;
+    width: 100%;
+
+    @extend %absolute;
+  }
+
+  .top{
+    top: 0;
+    z-index: 1;
+
+    .img{
+      bottom: 0%;
+    }
+  }
+
+  .bottom{
+    top: calc(50vh - 1px);
+    overflow: hidden;
+    
+    &:not(.no-ani){
+      animation: svgFilter #{$time * 1s} infinite;
+
+      .img{
+        top: -5%;
+      }
+    }
+
+    .img{
+      top: 0%;
+      transform: rotateX(180deg);
+    }
+  }
+
+  .test {
+    margin: 20px;
+    filter: url("#goo");
+
+    @extend %relative;
+
+    .a, .b{
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+
+      @extend %absolute;
+    }
+
+    .a{
+      background: red;
+    }
+
+    .b{
+      background: green;
+      top: 20px;
+    }
+  }
+  .effect{
+    width:100%;
+    height:100%;
+    padding-top:50px;
+    filter:contrast(10);
+    background:#fff;
+    position: relative;
+  }
+  .blackball{
+    width:100px;
+    height:100px;
+    background:black;
+    padding:10px;
+    border-radius:50%;
+    margin:0 auto;
+    z-index:1;
+    filter:blur(5px);
+  }
+  .redball{
+    width:60px;
+    height:60px;
+    background:#f00;
+    padding:10px;
+    border-radius:50%;
+    position:absolute;
+    top:70px;
+    left:50px;
+    z-index:2;
+    filter:blur(5px) ;
+    animation:rball 6s infinite;
+  }
+
+  @function getFilter($step, $i) {
+    @return #{'url(#turbulence-' + inspect($i) + ')'};
+  }
+
+  @mixin for($max: 60, $attrName: '') {
+    @for $i from 0 through $max {
+      $step: $i/$max;
+      $perStep: percentage($step);
+
+      $val: #{getFilter($step, $i)};
+
+      #{$perStep}{
+        #{$attrName}: $val;
+      }
+    }
+  } 
+
+  @keyframes svgFilter{
+    @include for($time * 60, 'filter');
+  }
+
+  @keyframes rball{
+    0%,100%{
+      left:35px;
+      width:60px;
+      height:60px;
+    }
+    4%,54%{
+      width:60px;
+      height:60px;
+    }
+    10%,60%{
+      width:50px;
+      height:70px;
+    }
+    20%,70%{
+      width:60px;
+      height:60px;
+    }
+    34%,90%{
+      width:70px;
+      height:50px;
+    }
+    41%{
+      width:60px;
+      height:60px;
+    }
+    50%{
+      left:calc(100% - 95px);
+      width:60px;
+      height:60px;
+    }
+  }
+}
