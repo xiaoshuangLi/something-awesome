@@ -168,7 +168,7 @@ $ratio: 5; // 流星width/height 宽高的比例 5vw : 1vh;
     $perStep: percentage($step);
 
     #{$perStep} {
-      // text-shadow: getStars($step);
+      text-shadow: getStars($step);
     }
   }
 }
