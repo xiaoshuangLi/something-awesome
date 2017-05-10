@@ -1,0 +1,457 @@
+<svg width="0" height="0" viewBox="0,0,0,0" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <!-- feDiffuseLighting surfaceScale 光源高度 -->
+    <!-- feDiffuseLighting diffuseConstant 对比度 -->
+
+    <filter id="goo">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+      <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+      <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+    </filter>
+
+    <filter id="testFeBlend">
+        <feImage xlink:href="/img/9ab2d8c809eec75bb9eb4c0acfde0402.jpeg" result="img" />
+        <feBlend in="SourceGraphic" in2="img" mode="screen" />
+    </filter>
+
+    <filter id="testFeBlend2">
+        <feImage xlink:href="/img/91a048625f5e7bee308d08f7a32b584a.jpeg" result="img2" />
+        <feBlend in="SourceGraphic" in2="img2" mode="multiply" />
+    </filter>
+
+    <filter id="colorMatrix">
+        <feColorMatrix type="matrix" 
+            values = "1 0 0 0 0
+                      0 1 0 0 0
+                      0 0 1 0 0
+                      0 0 0 1 -0.5" />
+    </filter>
+
+    <filter id="testFeComposite" width="300" height="300" x="0" y="0" filterUnits="userSpaceOnUse">
+        <!-- cave -->
+        <feImage preserveAspectRatio="xMidYMid slice" width="300" height="300" xlink:href="/img/9ab2d8c809eec75bb9eb4c0acfde0402.jpeg" result="img" />
+        <!-- ed -->
+        <feImage preserveAspectRatio="xMidYMid slice" width="300" height="300" xlink:href="/img/91a048625f5e7bee308d08f7a32b584a.jpeg" result="img2" />
+        <!-- sky -->
+        <feImage preserveAspectRatio="xMidYMid slice" width="300" height="300" xlink:href="/img/200ff932badfa75816aa7f06015f0c87.jpeg" result="img3" />
+        <feImage width="100" height="100" xlink:href="/img/logo.png" result="logo" />
+        <feImage width="100" height="100" xlink:href="/img/chat.png" result="chat" />
+
+        <feComposite in="logo" in2="in" operator="over"/>
+        <feComposite in="logo" in2="out" operator="over"/> 
+        <feComposite in="img" in2="img2" operator="arithmetic" k1="-1" k2="1" k3="1" k4="0"/>
+        <!-- <feComposite in="logo" in2="chat" operator="out"/> -->
+    </filter>
+
+    <filter id="testFeConvolveMatrix">
+        <feConvolveMatrix order="3" kernelMatrix="0 -1 3  -4 5 8  0 -8 -5" edgeMode="duplicate" preserveAlpha="false">
+            
+        </feConvolveMatrix>
+    </filter>
+
+    <filter id="ShiftBGAndBlur" filterUnits="userSpaceOnUse" x="0" y="0" width="1200" height="400">
+      <desc>这个滤镜舍弃了源图片，而是使用背景截图</desc>
+      <feOffset in="BackgroundImage" dx="0" dy="125" />
+      <feGaussianBlur stdDeviation="8" />
+    </filter>
+    <filter id="ShiftBGAndBlur_WithSourceGraphic" filterUnits="userSpaceOnUse" x="0" y="0" width="1200" height="400">
+      <desc>这个滤镜特效同时融合了背景截图和当前元素的图片</desc>
+      <feOffset in="BackgroundImage" dx="0" dy="125" />
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <filter id="identity" filterUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
+      <feComponentTransfer in="SourceGraphic">
+        <feFuncR type="identity"></feFuncR>
+        <feFuncG type="identity"></feFuncG>
+        <feFuncB type="identity"></feFuncB>
+        <feFuncA type="identity"></feFuncA>
+      </feComponentTransfer>
+    </filter>
+    <filter id="table" x="0" y="0" width="100%" height="100%">
+      <feComponentTransfer in="SourceGraphic">
+        <feFuncR type="table" tableValues="0 0.1 0.95 1"/>
+        <feFuncG type="table" tableValues="0"/>
+        <feFuncB type="table" tableValues="0"/>
+        <!-- <feFuncA type="table" tableValues="0.5 0.5 0.5 0.5"/> -->
+      </feComponentTransfer>
+    </filter>
+    <filter id="discrete" x="0" y="0" width="100%" height="100%">
+      <feComponentTransfer in="SourceGraphic">
+        <!-- <feFuncR type="discrete" tableValues="0.22 0.55 0.88 1"/> -->
+        <feFuncG type="discrete" tableValues="0"/>
+        <feFuncB type="discrete" tableValues="0"/>
+      </feComponentTransfer>
+    </filter>
+    <filter id="linear" x="0" y="0" width="100%" height="100%">
+      <feComponentTransfer in="SourceGraphic">
+        <feFuncR type="linear" slope="1" intercept="0"></feFuncR>
+        <feFuncG type="linear" slope="0" intercept="0.1"></feFuncG>
+        <feFuncB type="linear" slope="1" intercept="0"></feFuncB>
+      </feComponentTransfer>
+    </filter>
+    <filter id="gamma" x="0" y="0" width="100%" height="100%">
+      <feComponentTransfer in="SourceGraphic">
+        <feFuncR type="gamma" amplitude="1" exponent="0.8" offset="0"></feFuncR>
+        <feFuncG type="gamma" amplitude="0" exponent="1" offset="0"></feFuncG>
+        <feFuncB type="gamma" amplitude="0" exponent="0.8" offset="0"></feFuncB>
+      </feComponentTransfer>
+    </filter>
+
+    <filter id="f" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" x="0" y="0" width="1" height="1">
+      <feImage result="pict1" xlink:href="#m1" x="0" y="0" width="1" height="1"></feImage>
+      <feImage result="pict2" xlink:href="#m2" x="0" y="0"  width="1" height="1"></feImage>
+      <feDisplacementMap id="fdm" scale="0.5" xChannelSelector="A" yChannelSelector="A" in2="pict2" in="pict1"></feDisplacementMap>
+    </filter>
+   <!--  <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="rgba(255, 0, 0, 0.2)"></stop>
+      <stop offset="1" stop-color="rgba(0, 255, 0, 0.5)"></stop>
+    </linearGradient> -->
+    <!-- <radialGradient id="g" cx=".6" cy=".6" r=".05" spreadMethod="reflect">
+      <stop offset="0" stop-color="#000"></stop>
+      <stop offset="1" stop-color="#f00"></stop>
+    </radialGradient> -->
+
+    <!-- cave -->
+    <image x="0" y="0" width="400" height="300" xlink:href="/img/9ab2d8c809eec75bb9eb4c0acfde0402.jpeg" id="cave"></image> 
+    <!-- ed -->
+    <image x="0" y="0" width="400" height="300" xlink:href="/img/91a048625f5e7bee308d08f7a32b584a.jpeg" id="ed"></image> 
+    <!-- sky -->
+    <image x="0" y="0" width="400" height="300" xlink:href="/img/200ff932badfa75816aa7f06015f0c87.jpeg" id="sky"></image> 
+
+    <linearGradient id="g" x1="0" y1="0" x2=".2" y2=".02" spreadMethod="reflect">
+        <stop offset="0" stop-color="rgba(0,0,0,.8)"></stop>
+        <stop offset="0.2" stop-color="rgba(0,0,0,.7)"></stop>
+        <stop offset="0.6" stop-color="rgba(0,0,0,.1)"></stop>
+        <stop offset="1" stop-color="rgba(0,0,0,0)"></stop>
+    </linearGradient>
+
+    <rect id="m2" x="-10" y="0" width="410" height="300" fill="url(#g)"></rect>
+    <image id="m1" x="0" y="0" width="100" height="100" xlink:href="http://www.oxxostudio.tw/img/articles/201410/20141009_1_demo.jpg"></image>
+
+    <filter id="testFeDisplacementMap" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" x="0" y="0" width="1.1" height="1.1">
+        <feImage x="0" y="0" width="1.1" height="1.1" result="ed" xlink:href="#ed"></feImage>
+        <feImage x="0" y="0" width="1.1" height="1.1" result="cave" xlink:href="#cave"></feImage>
+        <feImage x="0" y="0" width="1.1" height="1.1" result="sky" xlink:href="#sky"></feImage>
+        <feImage result="pict2" xlink:href="#m2" x="0" y="0"  width="1" height="1"></feImage>
+        <feDisplacementMap scale="0.05" xChannelSelector="A" yChannelSelector="A" in="SourceGraphic" in2="pict2"></feDisplacementMap>
+    </filter>
+
+    <filter id="tile" x="0" y="0" width="100%" height="100%">
+      <feOffset in="SourceGraphic" x="50" y="50" width="100" height="100" />
+      <feTile/>
+    </filter>
+  </defs>
+  <filter id="displacementFilter">
+      <feTurbulence type="turbulence" baseFrequency="0.01 .1" numOctaves="1"
+      result="turbulence" seed="53" />
+      <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R"
+      yChannelSelector="B" />
+  </filter>
+  <filter id="turbulence" filterUnits="objectBoundingBox">
+    <feTurbulence id="feTurbulence" type="fractalNoise" numOctaves="3" seed="2" baseFrequency="0.0025513000000000036 0.15513000000000032"></feTurbulence>
+    <feDisplacementMap xChannelSelector="G" yChannelSelector="B" scale="20" in="SourceGraphic"></feDisplacementMap>
+  </filter>
+  <filter id="turbulence-0" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.01099995392696905 0.10004799581731201" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-1" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010999815712121644 0.10009598721199846" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-2" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.01099958536819374 0.10014396976184133" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-3" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010999262916410622 0.1001919390454376" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-4" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.01099884838648495 0.10023989064260673" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-5" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010998341816614028 0.10028782013479784" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-6" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010997743253476274 0.100335723105497" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-7" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.01099705275222692 0.1003835951406341" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-8" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010996270376492942 0.10043143182898963" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-9" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.01099539619836718 0.10047922876260112" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-10" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010994430298401706 0.10052698153716941" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-11" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010993372765600397 0.10057468575246434" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-12" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010992223697410737 0.10062233701273035" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-13" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010990983199714836 0.10066993092709146" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-14" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.01098965138681967 0.1007174631099559" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-15" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010988228381446552 0.1007649291814202" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-16" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010986714314719825 0.10081232476767278" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-17" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010985109326154773 0.10085964550139705" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-18" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010983413563644774 0.10090688702217374" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-19" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010981627183447664 0.10095404497688273" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-20" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010979750350171343 0.10100111502010423" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-21" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010977783236758607 0.10104809281451911" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-22" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010975726024471208 0.10109497403130864" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-23" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010973578902873161 0.10114175435055328" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-24" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010971342069813261 0.10118842946163087" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-25" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.01096901573140687 0.10123499506361372" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-26" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010966600102016907 0.101281446865665" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-27" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.01096409540423411 0.10132778058743405" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-28" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010961501868856515 0.1013739919594509" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-29" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010958819734868194 0.10142007672351962" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-30" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010956049249417229 0.10146603063311066" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-31" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010953190667792947 0.10151184945375223" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-32" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010950244253402385 0.10155752896342045" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-33" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010947210277746028 0.10160306495292838" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-34" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010944089020392785 0.10164845322631394" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-35" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010940880768954225 0.10169368960122646" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-36" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010937585819058088 0.10173876990931215" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-37" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.01093420447432103 0.10178368999659813" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-38" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010930737046320652 0.10182844572387528" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-39" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010927183854566787 0.10187303296707957" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-40" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010923545226472067 0.10191744761767213" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-41" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010919821497321737 0.10196168558301781" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-42" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010916013010242778 0.10200574278676233" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-43" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010912120116172272 0.10204961516920787" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-44" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010908143173825081 0.10209329868768714" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-45" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010904082549660778 0.10213678931693597" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-46" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.01089993861784989 0.10218008304946412" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-47" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010895711760239412 0.10222317589592464" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-48" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.01089140236631763 0.10226606388548144" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-49" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010887010833178222 0.10230874306617517" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-50" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010882537565483671 0.10235120950528742" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-51" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010877982975427981 0.10239345928970305" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-52" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010873347482698687 0.1024354885262708" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-53" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010868631514438192 0.10247729334216205" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-54" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010863835505204396 0.10251886988522764" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-55" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010858959896930665 0.10256021432435286" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-56" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.0108540051388851 0.10260132284981048" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-57" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010848971687629142 0.10264219167361174" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-58" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010843860006975502 0.10268281702985549" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-59" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010838670567945425 0.10272319517507514" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+<filter id="turbulence-60" filterUnits="objectBoundingBox">
+  <feTurbulence type="turbulence" baseFrequency="0.010833403848725276 0.10276332238858361" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
+  <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>
+</filter>
+
+  <!-- <image href="/img/91a048625f5e7bee308d08f7a32b584a.jpeg" filter="url(#turbulence)" x="37.5" y="50" width="300" height="300" /> -->
+
+ <!--  <rect x="40" y="40" width="100" height="100"
+    style="stroke : #000000; fill: green;" /> -->
+  <!-- <rect x="-10" y="-10" width="400" height="300" filter="url(#testFeDisplacementMap)"></rect> -->
+  <!-- <rect x="0" y="0" width="300" height="300" fill="url(#g)"></rect> -->
+
+  <!-- <image href="/img/91a048625f5e7bee308d08f7a32b584a.jpeg" filter="url(#testFeDisplacementMap)" y="50" width="100%" height="300" /> -->
+
+  <!-- <image href="/img/91a048625f5e7bee308d08f7a32b584a.jpeg" filter="url(#testFeBlend)" width="100%" height="300" /> -->
+  <!-- <image href="/img/9ab2d8c809eec75bb9eb4c0acfde0402.jpeg" filter="url(#testFeBlend2)" y="350" width="100%" height="300" /> -->
+
+<!--   <g transform="translate(0,0)">
+    <desc>第一幅是没加滤镜的效果</desc>
+    <rect x="25" y="25" width="100" height="100" fill="red" />
+    <g opacity=".5">
+      <circle cx="125" cy="75" r="45" fill="green" />
+      <polygon points="160,25 160,125 240,75" fill="blue" />
+    </g>
+  </g>
+  <g enable-background="new" transform="translate(270,0)">
+    <desc>第二幅是在容器上使用滤镜效果</desc>
+    <rect x="25" y="25" width="100" height="100" fill="red" />
+    <g opacity=".5">
+      <circle cx="125" cy="75" r="45" fill="green" />
+      <polygon points="160,25 160,125 240,75" fill="blue" />
+    </g>
+    <g filter="url(#ShiftBGAndBlur)" />
+  </g>
+  <g enable-background="new" transform="translate(540,0)">
+    <desc>第三幅是在内部容器上使用滤镜效果，注意与第二幅图的不同</desc>
+    <rect x="25" y="25" width="100" height="100" fill="red" />
+    <g filter="url(#ShiftBGAndBlur)" opacity=".5">
+      <circle cx="125" cy="75" r="45" fill="green" />
+      <polygon points="160,25 160,125 240,75" fill="blue" />
+    </g>
+  </g>
+  <g enable-background="new" transform="translate(810,0)">
+    <desc>第四幅是在图形元素上使用滤镜效果</desc>
+    <rect x="25" y="25" width="100" height="100" fill="red" />
+    <g opacity=".5">
+      <circle cx="125" cy="75" r="45" fill="green" />
+      <polygon points="160,25 160,125 240,75" fill="blue" filter="url(#ShiftBGAndBlur)" />
+    </g>
+  </g>
+  <g enable-background="new" transform="translate(1080,0)">
+    <desc>第五幅是在图形元素上使用不同的滤镜效果</desc>
+    <rect x="25" y="25" width="100" height="100" fill="red" />
+    <g opacity=".5">
+      <circle cx="125" cy="75" r="45" fill="green" />
+      <polygon points="160,25 160,125 240,75" fill="blue" filter="url(#ShiftBGAndBlur_WithSourceGraphic)" />
+    </g>
+  </g> -->
+</svg>

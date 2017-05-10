@@ -1,5 +1,5 @@
 
-$iconfont-url: '//at.alicdn.com/t/font_8gxlw58ogzy6i529';
+$iconfont-url: '//at.alicdn.com/t/font_e2ij1s1mezsemi';
 
 @font-face {
   font-family: "afanti-iconfont";
@@ -18,6 +18,8 @@ $iconfont-url: '//at.alicdn.com/t/font_8gxlw58ogzy6i529';
   -moz-osx-font-smoothing: grayscale;
 }
 
+.t-font-heart:before { content: "\e600"; }
+
 .t-font-setting:before { content: "\e60b"; }
 
 .t-font-minus:before { content: "\e757"; }
@@ -34,6 +36,8 @@ $iconfont-url: '//at.alicdn.com/t/font_8gxlw58ogzy6i529';
 
 .t-font-times:before { content: "\e609"; }
 
+.t-font-start:before { content: "\e621"; }
+
 .t-font-trash:before { content: "\e65b"; }
 
 .t-font-qrcode:before { content: "\ec56"; }
@@ -43,3 +47,4 @@ $iconfont-url: '//at.alicdn.com/t/font_8gxlw58ogzy6i529';
 .t-font-image:before { content: "\e64c"; }
 
 .t-font-warning:before { content: "\e672"; }
+
