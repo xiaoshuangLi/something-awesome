@@ -4,16 +4,24 @@ const rootRoute = {
   indexRoute: {
     component: require('./pages/Base'),
   },
-  // childRoutes: [
-  //   {
-  //     path: 'list',
-  //     getComponent(location, cb) {
-  //       require.ensure([], (require) => {
-  //         cb(null, require('./pages/List'));
-  //       });
-  //     },
-  //   },
-  // ],
+  childRoutes: [
+    {
+      path: 'animate',
+      getComponent(location, cb) {
+        require.ensure([], (require) => {
+          cb(null, require('./pages/Animate'));
+        });
+      },
+    },
+    {
+      path: 'menu',
+      getComponent(location, cb) {
+        require.ensure([], (require) => {
+          cb(null, require('./pages/Menu'));
+        });
+      },
+    },
+  ],
 };
 
 export default rootRoute;

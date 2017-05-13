@@ -3,7 +3,7 @@
 $bg: "/img/200ff932badfa75816aa7f06015f0c87.jpeg";
 $time: 8;
 
-.page-home-base-render{
+.page-svg-base-render{
   .img{
     width: 120%;
     height: 120%;
@@ -100,6 +100,7 @@ $time: 8;
     left:50px;
     z-index:2;
     filter:blur(5px) ;
+    -webkit-filter:blur(5px) ;
     animation:rball 6s infinite;
   }
 

@@ -1,0 +1,116 @@
+@import "frontend/css/func.scss";
+
+$blue: #2491af;
+$width: 100px;
+$height: 40px;
+$itemMargin: 20px;
+$padding: 10px;
+
+$distance: 20px;
+$transition: 0.5s;
+$transitionDelay: 0.2s;
+
+@mixin menuContainer{
+  .menu-container{
+    filter: url(#gooey);
+    width: 100vw;
+    height: 100vh;
+
+    .menus{
+      opacity: 0;
+      transition: $transition;
+
+      &:before, .item{
+        width: $width;
+        height: $height;
+        background: $blue;
+        z-index: 1;
+
+        top: 0;
+        left: $width * -1;
+        @extend %absolute;
+      }
+
+      &:before{
+        content: '';
+
+        @extend %none;
+        @extend %inline-block;
+      }
+
+      .item{
+        transition: $transition;
+        top: $padding;
+        left: $padding;
+
+        @extend %fwhite;
+        @extend %wnowrap;
+
+        &:before{
+          content: attr(data-before);
+          z-index: 1;
+
+          @extend %percenter;
+        }
+
+        &.active{
+          color: $blue;
+
+          @extend %bgwhite;
+        }
+      }
+
+      &.init, &.completed{
+        opacity: 1;
+      }    
+    }
+
+    .content{
+      padding: 10px;
+      width: calc(100vw - #{ $width + $distance * 2 });
+      height: calc( 100vh - #{$padding * 2} );
+      opacity: 0;
+      transform: translate($padding, $padding);
+      overflow: hidden;
+
+      top: 0;
+      left: 0;
+
+      @extend %fwhite;
+      @extend %absolute;
+      @extend %overhidden;
+
+      .bg{
+        background: $blue;
+        width: $height;
+        height: $height;
+        border-radius: 50%;
+
+        top: 0;
+        left: 0;
+        @extend %absolute;
+      }
+
+      .img{
+        padding-bottom: 100%;
+        border-radius: 10px;
+
+        @include bg;
+      }
+
+      .title{
+        margin-top: 10px; 
+      }
+
+      >*{
+        &:not(.bg) {
+          opacity: 0;
+        }
+      }
+    }
+  }
+}
+
+.page-svg-menu-render{
+  @include menuContainer;
+}

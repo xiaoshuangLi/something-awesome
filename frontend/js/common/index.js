@@ -158,6 +158,14 @@ export function getStyles(ele = '', attr = '') {
   return res[attr] || ''
 }
 
+export function getEles(selector) {
+  if (!selector) {
+    return [ document ];
+  }
+
+  return document.querySelectorAll(selector);
+}
+
 const styles = {
   title: 'font-size: 18px; color: #666; font-weight: bold; text-align: center;',
   normal: 'text-indent: 28px; font-size: 12px; color: #666;',
