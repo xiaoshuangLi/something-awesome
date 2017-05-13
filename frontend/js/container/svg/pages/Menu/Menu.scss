@@ -92,10 +92,14 @@ $transitionDelay: 0.2s;
       }
 
       .img{
-        padding-bottom: 100%;
+        padding-bottom: 75%;
         border-radius: 10px;
 
         @include bg;
+
+        & + .img{
+          margin-top: 10px; 
+        }
       }
 
       .title{

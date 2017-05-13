@@ -4,15 +4,18 @@ import classnames from 'classnames';
 
 import Filter from './filter_inline.svg';
 import Ed from 'img/ed.jpeg';
+import Ed2 from 'img/ed_2.jpg';
 import DarkSouls from 'img/dark_souls.jpg';
+import DarkSouls2 from 'img/dark_souls_2.jpg';
 import FightClub from 'img/fight_club.jpg';
+import FightClub2 from 'img/fight_club_2.jpeg';
 
 import { getEles } from 'js/common';
 
 const data = [
-  { name: 'Ed Sheeran', img: Ed ,content: 'Ed Sheeran, 又称黄老板，一位英国歌手。' },
-  { name: 'Fight Club', img: FightClub ,content: 'Fight Club, 一部根据同名小说改编的电影。' },
-  { name: 'Dark Souls', img: DarkSouls ,content: 'Dark Souls, 一个不一样的RPG游戏。' },
+  { name: 'Ed Sheeran', img: [ Ed, Ed2 ] ,content: 'Ed Sheeran, 又称黄老板，一位英国歌手。' },
+  { name: 'Fight Club', img: [FightClub, FightClub2] ,content: 'Fight Club, 一部根据同名小说改编的电影。' },
+  { name: 'Dark Souls', img: [DarkSouls, DarkSouls2] ,content: 'Dark Souls, 一个不一样的RPG游戏。' },
 ];
 
 const _createLine = (list = []) => {
@@ -156,6 +159,12 @@ class Menu extends Component {
       );
     });
 
+    const imgs = detail.img.map((src, i) => {
+      return (
+        <div className="img" key={i} style={{backgroundImage: `url(${ src })`}} />
+      );
+    });
+
     return (
       <div className="page-svg-menu-render">
         <Filter className="ng-hide" />
@@ -166,7 +175,7 @@ class Menu extends Component {
 
           <div className="content" id="content">
             <div className="bg"></div>
-            <div className="img" style={{backgroundImage: `url(${ detail.img })`}} />
+            { imgs }
             <div className="title"> { detail.content } </div>
           </div>
         </div>
