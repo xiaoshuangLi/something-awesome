@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import Key from './key_inline.svg';
+import Test from './test_inline.svg';
 import Filter from './filter_inline.svg';
 
 let img = document.querySelector("#test feTurbulence");
@@ -49,8 +50,10 @@ class Base extends Component {
     // );
     
     return (
-      <div className="page-home-base-render">
+      <div className="page-svg-base-render">
         <Filter className="ng-hide" />
+        <Key className="ng-hide"/>
+        <Test className="ng-hide"/>
 
         <div className="top">
           <div className="img"></div>

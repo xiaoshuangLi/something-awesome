@@ -1,4 +1,4 @@
-<svg width="375" height="667" viewbox="0 0 100% 100%">
+<svg width="375" height="667" viewBox="0 0 100% 100%">
   <filter id="turbulence-0" filterUnits="objectBoundingBox">
     <feTurbulence type="turbulence" baseFrequency="0.011 0.1" numOctaves="1" result="turbulence" seed="53"></feTurbulence>
     <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="50" xChannelSelector="R" yChannelSelector="B"></feDisplacementMap>

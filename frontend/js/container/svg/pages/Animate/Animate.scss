@@ -1,0 +1,17 @@
+@import "frontend/css/func.scss";
+
+$svg: './hi.svg';
+$mask: #{inspect($svg) + '#hi'};
+
+.page-svg-animate-render{
+  .cube{
+    width: 200px;
+    height: 200px;
+    border-radius: 5px;
+    margin: 10px;
+    background: red;
+    -webkit-mask-image: url($mask);
+    -webkit-mask-image: url($svg);
+    -webkit-mask-image: url($svg);
+  }
+}
