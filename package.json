@@ -25,6 +25,7 @@
     "es6-promise": "^4.0.5",
     "express": "^4.13.4",
     "font-awesome": "^4.7.0",
+    "gsap": "^1.19.1",
     "history": "^4.6.1",
     "isomorphic-fetch": "^2.2.1",
     "jquery": "^3.1.1",
@@ -39,6 +40,7 @@
     "redux-thunk": "^2.1.0",
     "redux-undo": "^0.6.1",
     "require-dir": "^0.3.0",
+    "socket.io": "^1.7.3",
     "webpack-isomorphic-tools": "^3.0.2"
   },
   "devDependencies": {
@@ -60,7 +62,7 @@
     "html-webpack-plugin": "^2.22.0",
     "image-webpack-loader": "^3.0.0",
     "jsx-loader": "^0.13.2",
-    "node-sass": "^3.10.1",
+    "node-sass": "^4.5.2",
     "postcss": "^5.2.2",
     "postcss-extend": "^1.0.5",
     "postcss-import": "^8.1.2",
@@ -70,6 +72,7 @@
     "postcss-simple-vars": "^3.0.0",
     "react-addons-transition-group": "^15.4.1",
     "react-hot-loader": "^3.0.0-beta.6",
+    "resolve-url-loader": "^2.0.2",
     "sass-loader": "^4.0.2",
     "style-loader": "^0.13.1",
     "svg-react-loader": "^0.3.7",

@@ -133,9 +133,9 @@ module.exports = {
         test: /\.scss$/,
         use: pro ? ExtractTextPlugin.extract({
           fallback: 'style-loader', 
-          use: ['css-loader?minimize', 'sass-loader']
+          use: ['css-loader?minimize', 'resolve-url-loader', 'sass-loader']
         }) 
-        : ['style-loader', 'css-loader?minimize', 'sass-loader']
+        : ['style-loader', 'css-loader?minimize', 'resolve-url-loader', 'sass-loader']
       }
     ]
   },
