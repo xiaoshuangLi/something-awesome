@@ -1,8 +1,42 @@
+<!-- viewbox 显示的区域  坐标 0,0 到 375,667 -->
+<!-- preserveAspectRatio 不会念，填充的方式 相当于background-position -->
+<!-- 资料链接 http://www.zhangxinxu.com/wordpress/2014/08/svg-viewport-viewbox-preserveaspectratio/ -->
+
 <svg width="100%" height="100%" viewBox="0,0,375,667" preserveAspectRatio="xMidYMid meet">
-  <defs>
+	<!-- definitions 声明定义，可直接通过id使用定义的标签 -->
+	<!-- 不要想着使用.className这种骚操作，不可以的，不要问我为什么知道 -->
+
+	<!-- feGaussianBlur 高斯模糊 -->
+	<!-- 唯一的私有属性 stdDeviation 定义模糊的半径 -->
+
+	<!-- feColorMatrix 颜色计算矩阵 -->
+	<!-- css filter 大部分的效果都以直接使用这个滤镜计算得出 -->
+	<!-- 计算方式如下 -->
+	<!-- 	/* R G B A 1 */ 
+		1 0 0 0 0 // R = 1*R + 0*G + 0*B + 0*A + 0 
+		0 1 0 0 0 // G = 0*R + 1*G + 0*B + 0*A + 0 
+		0 0 1 0 0 // B = 0*R + 0*G + 1*B + 0*A + 0 
+		0 0 0 1 0 // A = 0*R + 0*G + 0*B + 1*A + 0 -->
+	<!-- 如果没太看懂，可以演示说明，这是效果比较重要的一环 -->
+
+	<!-- feComposite 合并矩阵 -->
+	<!-- 特定的方式合并in2和in属性输入的图像并返回 -->
+	<!-- 资料链接 http://apike.ca/prog_svg_filter_feComposite.html -->
+	<!-- 这里我们使用的合并方式为atop -->
+	<!-- 意思就是以in2为画布背景, in的图像如果超出in2范围便不显示 -->
+
+	<!-- SourceGraphic 意思为输入的图像源。这里表示我们html的样式  -->
+  <!-- 下面我们逐个注释每个滤镜来看看效果 -->
+  <!-- 这里需要重启进程估计得等一会 -->
+  <defs> 
     <filter id="gooey">
       <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-      <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+      <feColorMatrix in="blur" mode="matrix" values="
+      	1 0 0 0 0  
+      	0 1 0 0 0  
+      	0 0 1 0 0  
+      	0 0 0 19 -9" 
+      	result="goo" />
       <feComposite in="SourceGraphic" in2="goo" operator="atop" />
     </filter>
   </defs>
