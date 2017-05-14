@@ -21,6 +21,14 @@ const rootRoute = {
         });
       },
     },
+    {
+      path: 'filter',
+      getComponent(location, cb) {
+        require.ensure([], (require) => {
+          cb(null, require('./pages/Filter'));
+        });
+      },
+    },
   ],
 };
 
