@@ -1,9 +1,73 @@
 <svg width="100%" height="100%" viewBox="0,0,375,667" preserveAspectRatio="xMidYMid meet">
   <defs>
-    <filter id="gooey">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-      <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
-      <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+    <filter id="grayscale">
+      <feColorMatrix type='saturate' values='0' />
     </filter>
+
+    <filter id="sepia">
+    	 <feColorMatrix type="matrix"
+         values="0.393 0.769 0.189 0 0
+                 0.349 0.686 0.168 0 0
+                 0.272 0.534 0.131 0 0
+                 0 0 0 1 0"/>
+    </filter>
+
+    <filter id="saturate">
+    	 <feColorMatrix type="saturate" values="3"/>
+    </filter>
+
+    <filter id="hue-rotate">
+		  <feColorMatrix type="hueRotate" values="90"/>
+		</filter> 
+
+		<filter id="invert">
+		  <feComponentTransfer>
+		      <feFuncR type="table" tableValues="1 0"/>
+		      <feFuncG type="table" tableValues="1 0"/>
+		      <feFuncB type="table" tableValues="1 0"/>
+		  </feComponentTransfer>
+		</filter> 
+
+		<filter id="opacity">
+		  <feComponentTransfer>
+		      <feFuncA type="table" tableValues="0 0.2"/>
+		  </feComponentTransfer>
+		</filter> 
+
+		<filter id="brightness">
+		  <feComponentTransfer>
+		      <feFuncR type="linear" slope="3"/>
+		      <feFuncG type="linear" slope="3"/>
+		      <feFuncB type="linear" slope="3"/>
+		  </feComponentTransfer>
+		</filter> 
+
+		<filter id="contrast">
+		  <feComponentTransfer>
+		      <feFuncR type="linear" slope="3" intercept="-1"/>
+		      <feFuncG type="linear" slope="3" intercept="-1"/>
+		      <feFuncB type="linear" slope="3" intercept="-1"/>
+		  </feComponentTransfer>
+		</filter> 
+
+		<filter id="blur">
+		  <feGaussianBlur stdDeviation="3" />
+		</filter> 
+    
+    <!-- 这是一个有意思的滤镜 -->
+    <!-- x -->
+    <!-- y -->
+    <!-- width -->
+    <!-- height -->
+    <!-- SourceAlpha -->
+    <!-- 了解这个滤镜需要了解这些属性 -->
+		<filter id="drop-shadow" x="-25" y="-25" width="150" height="150">
+		  <feOffset in="SourceAlpha" dx="5" dy="5" result="offsetAlpha"/>
+		  <feGaussianBlur in="offsetAlpha" stdDeviation="5" result="blur"/>
+		  <feMerge>
+		    <feMergeNode/>
+		    <feMergeNode in="SourceGraphic"/>
+		  </feMerge>
+		</filter> 
   </defs>
 </svg>

@@ -2,6 +2,22 @@
 
 $bg: "~img/ed.jpeg";
 $list: ('grayscale', 'sepia', 'saturate', 'hue-rotate', 'invert', 'opacity', 'brightness', 'contrast', 'blur', 'drop-shadow');
+$total: length($list);
+
+@mixin filter($attr){
+	filter: $attr;
+	-webkit-filter: $attr;
+}
+
+@mixin special($class, $attr) {
+	&.#{$class}{
+		.img{
+			&:nth-child(2) {
+				@include filter($attr);
+			}
+		}
+	}
+}
 
 .page-svg-filter-render{
 	background: #efefef; 
@@ -43,13 +59,43 @@ $list: ('grayscale', 'sepia', 'saturate', 'hue-rotate', 'invert', 'opacity', 'br
 			}
 		}
 
-		&.grayscale{
-			.img{
-				&:nth-child(2){
-					-webkit-filter:grayscale(1);
+		@for $i from 1 through $total{
+			$filter: nth($list, $i);
+			$css: #{$filter + '(3)'};
+			$svg: #{'#' + $filter};
+
+			&.#{$filter} {
+				.img{
+					&:nth-child(2){
+						@include filter($css);
+					}
+					&:nth-child(3){
+						@include filter(url($svg));
+					}
 				}
+			}
+		}
+
+		@include special('hue-rotate', hue-rotate(90deg));
+		@include special('opacity', opacity(.2));
+		@include special('blur', blur(3px));
+		@include special('drop-shadow', drop-shadow(5px 5px 5px #000));
+
+		&.hue-rotate{
+			.img{
 				&:nth-child(3){
-					-webkit-filter:url(#grayscale);
+					@include filter(#hueRotate)
+				}
+			}
+		}
+
+		&.drop-shadow{
+			.img{
+				border: none;
+				box-shadow: none;
+
+				&:nth-child(3){
+					@include filter(#dropShadow)
 				}
 			}
 		}
