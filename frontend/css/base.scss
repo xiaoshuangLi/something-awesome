@@ -111,6 +111,18 @@ body{
   @extend %table;
 }
 
+[data-before] {
+  &:before{
+    content: attr(data-before);
+  }
+}
+
+[data-after] {
+  &:before{
+    content: attr(data-after);
+  }
+}
+
 @for $i from 1 through 20 {
   .fw-#{$i * 5} {
     $fwWidth : $i/20;
