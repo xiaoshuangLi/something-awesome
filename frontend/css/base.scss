@@ -118,7 +118,7 @@ body{
 }
 
 [data-after] {
-  &:before{
+  &:after{
     content: attr(data-after);
   }
 }
