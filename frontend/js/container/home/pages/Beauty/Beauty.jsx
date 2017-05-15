@@ -21,6 +21,26 @@ const list = [
       },
     ],
   },
+  {
+    title: 'Svg',
+    list: [
+      {
+        title: 'Base',
+        desc: 'svg滤镜实验',
+        path: '/svg',
+      },
+      {
+        title: 'Filter',
+        desc: 'Svg滤镜 VS Css滤镜',
+        path: '/sass/filter',
+      },
+      {
+        title: 'Menu',
+        desc: '黏黏黏',
+        path: '/sass/menu',
+      },
+    ],
+  },
 ];
 
 class Beauty extends Component {

@@ -47,6 +47,10 @@
       @extend %block;
     }
 
+    & + .list{
+      margin-top: 10px;
+    }
+
     .title{
 
       &+.item{
