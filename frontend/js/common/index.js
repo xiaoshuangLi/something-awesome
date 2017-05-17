@@ -22,13 +22,27 @@ export function loadAll(list = [], cb){
 
   let num = 0
   let len = list.length
+  let imgs = []
 
   list.map(img => {
-    load(img, () => {
+    load(img, ele => {
       num++
 
+      for(let v = 0; v < list.length; v ++) {
+        const val = list[v];
+        const { src } = ele;
+        const index = src.indexOf(val);
+
+        if(!!~index) {
+          imgs[index] = ele;
+          break;
+        }
+      }
+
       if(num >= len) {
-        return cb && timeout(cb)
+        return cb && timeout(() => {
+          cb(imgs)
+        })
       }
     })
   })
@@ -142,4 +156,12 @@ export function getStyles(ele = '', attr = '') {
   let res = view.getComputedStyle(ele)
 
   return res[attr] || ''
+}
+
+export function getEles(selector) {
+  if (!selector) {
+    return [ document ];
+  }
+
+  return document.querySelectorAll(selector);
 }
