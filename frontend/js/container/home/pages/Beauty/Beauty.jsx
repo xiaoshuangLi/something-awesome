@@ -32,12 +32,12 @@ const list = [
       {
         title: 'Filter',
         desc: 'Svg滤镜 VS Css滤镜',
-        path: '/sass/filter',
+        path: '/svg/filter',
       },
       {
         title: 'Menu',
         desc: '黏黏黏',
-        path: '/sass/menu',
+        path: '/svg/menu',
       },
     ],
   },

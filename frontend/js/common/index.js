@@ -34,7 +34,7 @@ export function loadAll(list = [], cb){
         const index = src.indexOf(val);
 
         if(!!~index) {
-          imgs[index] = ele;
+          imgs[v] = ele;
           break;
         }
       }
