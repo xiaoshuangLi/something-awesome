@@ -5,7 +5,6 @@ Test something aswesome in the web, like svg, css, canvas.
 
 How to start?
 ```bash
- git clone 
  npm install
  npm run build
  npm run dev
