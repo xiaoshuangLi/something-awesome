@@ -1,6 +1,7 @@
 import { getEles, loadAll } from 'js/common';
 
 import Spot from './Spot';
+import Fps from './Fps';
 
 // const window = window || {
 //   devicePixelRatio: 1,
@@ -90,7 +91,7 @@ class Canvas {
     Object.keys(obj).forEach((key) => {
       const val = obj[key];
 
-      switch (typeof val){
+      switch (typeof val) {
         case 'string':
           ctx[key] = val;
           break;
@@ -98,18 +99,19 @@ class Canvas {
           val(ctx);
           break;
       }
-    })
+    });
 
     return ctx;
   }
 
-  setState(obj){
+  setState(obj) {
     const { state = {} } = this;
     this.state = Object.assign({}, state, obj);
   }
 
   getAttr() {
-    let { cva, w, h, ratio } = this.state;
+    let { cva, w, h } = this.state;
+    const { ratio } = this.state;
 
     cva = typeof cva === 'string' ? getEles(cva)[0] : cva;
 
@@ -140,7 +142,7 @@ class Canvas {
   }
 
   getImgs(cb) {
-    const { imgs = [], w, h, cw, ch, max, ctx } = this.state;
+    const { imgs = [], cw, ch, max, ctx } = this.state;
     const maxWidth = _getNum(max, cw);
 
     let list = [];
@@ -161,14 +163,14 @@ class Canvas {
         return ctx.getImageData(x, y, width, height);
       });
 
-      ctx.clearRect(0,0, cw, ch);
+      ctx.clearRect(0, 0, cw, ch);
       cb && cb(list);
     });
   }
 
   getSopts(res) {
     const { width, height } = res;
-    const { cw, ch, exclude, include, order } = this.state;
+    const { cw, ch, exclude, include, order, ratio } = this.state;
 
     let color = [];
     const colors = [];
@@ -184,7 +186,7 @@ class Canvas {
     });
 
     colors.forEach((item, i) => {
-      const y = Math.ceil((i + 1)/width);
+      const y = Math.ceil((i + 1) / width);
 
       if (y % order !== 0) {
         return null;
@@ -196,43 +198,45 @@ class Canvas {
         return null;
       }
 
-      if(!_valid(item, include, exclude)) {
+      if (!_valid(item, include, exclude)) {
         return null;
       }
-
-      // item[3] = item[3]/255;
 
       spots.push({
         color: item,
         x: x + (cw - width)/2,
         y: y + (ch - height)/2,
-      })
+      });
     });
 
     return spots;
   }
 
   update(spots) {
-    const { ctx, cw, ch, w, h } = this.state;
-    const length = cw * ch * 4;
+    const { ctx, freeze, speed, cw, ch } = this.state;
+    const res = new Fps({
+      freeze,
+      speed,
+      list: spots,
+      order: 2,
+      cb: (list = []) => {
+        ctx.clearRect(0, 0, cw, ch);
+        const imgData = ctx.createImageData(cw, ch);
+        const spotsTotal = list.length;
 
-    window.requestAnimationFrame(() => {
-      ctx.clearRect(0,0, cw, ch);
-      const imgData = ctx.createImageData(cw, ch);
-
-      spots.forEach(spot => { 
-        spot.update((res) => {
-          const { x, y, color } = res;
+        for (let a = 0; a < spotsTotal; a++) {
+          const spot = list[a];
+          const { x, y, color = {} } = spot.res;
           const start = (x + (y - 1) * cw) * 4;
-          for( let v = 0; v < color.length; v++ ) {
-            imgData.data[start + v] = imgData.data[start + v] || color[v];
+
+          for (let v = 0; v < 4; v++) {
+            const curr = start + v;
+            imgData.data[curr] = imgData.data[curr] || color[v] || 0;
           }
-        }); 
-      });
+        }
 
-      ctx.putImageData(imgData, 0, 0);
-
-      this.update(spots);
+        ctx.putImageData(imgData, 0, 0);
+      },
     });
   }
 
@@ -241,13 +245,13 @@ class Canvas {
 
     if (!list.length) {
       return null;
-    } 
+    }
 
     list = list.map(this.getSopts);
     const total = Math.max.apply(null, list.map(item => item.length));
     const spots = [];
 
-    for(let v = 0; v < total; v ++) {
+    for (let v = 0; v < total; v++) {
       const spot = list.map(item => item[v]);
       spots.push(new Spot({
         list: spot,
@@ -257,7 +261,6 @@ class Canvas {
       }));
     }
 
-    spots.forEach(spot => { spot.render(); });
     this.update(spots);
   }
 

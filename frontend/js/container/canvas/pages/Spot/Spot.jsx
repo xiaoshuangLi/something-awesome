@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
 import Me from './me.jpg';
 import Durden from './durden.jpg';
@@ -6,7 +6,7 @@ import Durden from './durden.jpg';
 import Canvas from '../../components/Spot';
 
 const imgs = [Me, Durden];
-const order = 3;
+const order = 2;
 
 class Spot extends Component {
 
@@ -21,7 +21,7 @@ class Spot extends Component {
       imgs,
       speed: 1.5,
       freeze: 2,
-    })
+    });
 
     ele.setCva({
       strokeStyle: 'rgba(0,0,0,0)',
@@ -33,7 +33,7 @@ class Spot extends Component {
       <div className="page-canvas-spot-render">
         <canvas id="canvas" />
       </div>
-    )
+    );
   }
 }
 
