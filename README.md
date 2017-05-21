@@ -26,6 +26,4 @@ $img: '~img/ed.jpeg'; // scss中直接引用
 
 - /container/global 页面配置文件夹
 - /container/global/routes.js 配置页面路径
-- - /container/home/route.js 每个页面下路径配置
 - /container/global/reducers.js 配置redux
-- - /container/home/reducer.js 每个页面下reducer配置
