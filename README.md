@@ -17,7 +17,7 @@
 $img: '~img/ed.jpeg'; // scss中直接引用
 ```
 - img_inline.svg 引用svg，返回react组件使用
-— img_b.jpeg 返回data:base:64 图片编码
+- img_b.jpeg 返回data:base:64 图片编码
 
 ## js => /js 
 - /common  公用的js方法
@@ -26,7 +26,6 @@ $img: '~img/ed.jpeg'; // scss中直接引用
 
 - /container/global 页面配置文件夹
 - /container/global/routes.js 配置页面路径
+- - /container/home/route.js 每个页面下路径配置
 - /container/global/reducers.js 配置redux
-
-- /container/home/route.js 每个页面下路径配置
-- /container/home/reducer.js 每个页面下reducer配置
+- - /container/home/reducer.js 每个页面下reducer配置
