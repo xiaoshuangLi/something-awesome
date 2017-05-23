@@ -106,10 +106,15 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
+        test: /^(?!.*(\_inline)).*\.(js|jsx)$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
         query: babelLoaderQuery
+      },
+      {
+        test: /\_inline\.(js|jsx)$/,
+        exclude: /node_modules/,
+        loader: 'file-loader?hash=sha512&digest=hex&name=js/[hash].[ext]',
       },
       {
         test: /\_inline\.svg$/i,
