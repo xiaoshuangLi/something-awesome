@@ -1,0 +1,7 @@
+@import "frontend/css/func.scss";
+
+.page-canvas-view-render{
+  & , canvas{
+    @extend %full;
+  }
+}

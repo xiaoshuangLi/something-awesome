@@ -6,7 +6,7 @@ import Durden from './durden.jpg';
 import Canvas from '../../components/Spot';
 
 const imgs = [Me, Durden];
-const order = 2;
+const order = 1;
 
 class Spot extends Component {
 
