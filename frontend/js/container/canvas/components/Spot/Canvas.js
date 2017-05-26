@@ -22,7 +22,7 @@ function _getNum(num = 0, w = 0) {
 }
 
 function _validColor(curr, target) {
-  for(let v = 0; v < 3; v ++ ){
+  for (let v = 0; v < 3; v ++ ) {
     if (curr[v] !== target[v]) {
       return false;
     }
@@ -36,15 +36,15 @@ function _validList(curr, list, val = true) {
     return val;
   }
 
-  for(let v = 0; v < list.length; v ++ ) {
+  for (let v = 0; v < list.length; v ++ ) {
     const item = list[v];
 
-    if (!_validColor(curr, item)) {
-      return false;
+    if (_validColor(curr, item)) {
+      return true;
     }
   }
 
-  return true;
+  return false;
 }
 
 function _valid(curr, include = [], exclude = []) {
@@ -152,12 +152,12 @@ class Canvas {
         let { width, height } = img;
 
         if (width >= maxWidth) {
-          height = Math.floor(height * maxWidth/width);
+          height = Math.floor(height * maxWidth / width);
           width = maxWidth;
         }
 
-        const x = (cw - width)/2;
-        const y = (ch - height)/2;
+        const x = (cw - width) / 2;
+        const y = (ch - height) / 2;
 
         ctx.drawImage(img, x, y, width, height);
         return ctx.getImageData(x, y, width, height);
@@ -170,7 +170,7 @@ class Canvas {
 
   getSopts(res) {
     const { width, height } = res;
-    const { cw, ch, exclude, include, order, ratio } = this.state;
+    const { cw, ch, exclude, include, order } = this.state;
 
     let color = [];
     const colors = [];
@@ -213,12 +213,12 @@ class Canvas {
   }
 
   update(spots) {
-    const { ctx, freeze, speed, cw, ch } = this.state;
+    const { ctx, freeze, speed, cw, ch, imgs } = this.state;
     const res = new Fps({
       freeze,
       speed,
       list: spots,
-      order: 2,
+      order: imgs.length,
       cb: (list = []) => {
         ctx.clearRect(0, 0, cw, ch);
         const imgData = ctx.createImageData(cw, ch);

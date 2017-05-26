@@ -1,11 +1,15 @@
+const _calc = (a, b, step) => {
+  return Math.ceil(a + (b - a) * step);
+};
+
 class Spot {
   constructor(props) {
     this.state = {
       ctx: props.ctx,
       list: props.list || [],
+      length: 0,
     };
 
-    this.calc = this.calc.bind(this);
     this.init();
   }
 
@@ -14,21 +18,16 @@ class Spot {
     this.state = Object.assign({}, state, obj);
   }
 
-  calc(a, b, step) {
-    return Math.ceil(a + (b - a) * step);
-  }
-
   update(step, index) {
-    const { list = [] } = this.state;
-    const { calc } = this;
+    const { list = [], length } = this.state;
 
     const spot = list[index];
-    const target = list[(index + 1) % list.length];
+    const target = list[(index + 1) % length];
 
     this.res = {
-      x: calc(spot.x, target.x, step),
-      y: calc(spot.y, target.y, step),
-      color: [calc(spot.color[0], target.color[0], step), calc(spot.color[1], target.color[1], step), calc(spot.color[2], target.color[2], step), calc(spot.color[3], target.color[3], step)],
+      x: _calc(spot.x, target.x, step),
+      y: _calc(spot.y, target.y, step),
+      color: [_calc(spot.color[0], target.color[0], step), _calc(spot.color[1], target.color[1], step), _calc(spot.color[2], target.color[2], step), _calc(spot.color[3], target.color[3], step)],
     };
   }
 
@@ -45,12 +44,13 @@ class Spot {
       return item || {
         x: next.x || 0,
         y: next.y || 0,
-        color: [0,0,0, -255 * 3],
+        color: [0, 0, 0, -255 * 6],
       };
     });
 
     this.setState({
       list,
+      length: list.length,
     });
   }
 }
