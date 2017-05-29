@@ -4,7 +4,7 @@ import { getPiexl } from './func';
 import Base from './Base';
 import Part from './Part';
 
-ImageData.prototype.from = function (list = [], ctx) {
+ImageData.prototype.getDataFrom = function (list = [], ctx) {
   const self = this;
   const { width, data } = self;
 
@@ -33,6 +33,7 @@ class Canvas extends Base {
     };
 
     this.action = this.action.bind(this);
+    this.update = this.update.bind(this);
 
     this.init();
   }
@@ -117,9 +118,7 @@ class Canvas extends Base {
         item.update && loads.push(item.update(ctx, cw, ch, ratio, w, h));
       }
 
-      Promise.all(loads).then(() => {
-        this.update();
-      });
+      Promise.all(loads).then(this.update);
     });
   }
 

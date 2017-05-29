@@ -4,19 +4,33 @@ import Me from './me.jpg';
 import Durden from './durden.jpg';
 
 import Canvas from '../../components/View';
-import CalcSpotsJS from './calcSpots_inline';
 
-const CalcSpotsWorker = new Worker(CalcSpotsJS);
-
-const postMessage = (data) => {
-  CalcSpotsWorker.postMessage(data);
+const _calc = (a, b, step) => {
+  return Math.ceil(a + (b - a) * step);
 };
 
-const reveive = (cb) => {
-  CalcSpotsWorker.onmessage = (e) => {
-    cb && cb(e.data);
-  };
-};
+function createSpots(data) {
+  const { from = [], to = [], curr } = data;
+
+  const { length } = from;
+  const res = [];
+
+  for (let v = 0; v < length; v++) {
+    const fromItem = from[v];
+    const toItem = to[v];
+
+    const fromColor = fromItem.color || [];
+    const toColor = toItem.color || [];
+
+    res[v] = {
+      x: _calc(fromItem.x, toItem.x, curr),
+      y: _calc(fromItem.y, toItem.y, curr),
+      color: [_calc(fromColor[0], toColor[0], curr), _calc(fromColor[1], toColor[1], curr), _calc(fromColor[2], toColor[2], curr), _calc(fromColor[3], toColor[3], curr)],
+    };
+  }
+
+  return res;
+}
 
 const imgs = [Me, Durden];
 
@@ -35,12 +49,12 @@ class View extends Component {
       list: [{
         imgs,
         useImageData: true,
-        size: 2,
+        size: 1,
         render: function (ctx, cw, ch) {
           const { spots = [] } = this.state;
           const imageData = ctx.createImageData(cw, ch);
 
-          imageData.from(spots[0], ctx);
+          imageData.getDataFrom(spots[0], ctx);
         },
         update: function (ctx, cw, ch) {
           return new Promise((resolve) => {
@@ -57,18 +71,15 @@ class View extends Component {
               this.state.curr = curr;
             }
 
-            reveive((data) => {
-              const imageData = ctx.createImageData(cw, ch);
-
-              imageData.from(data, ctx);
-              resolve();
-            });
-
-            postMessage({
+            const data = createSpots({
               from: spots[index],
               to: spots[next],
               curr,
             });
+
+            const imageData = ctx.createImageData(cw, ch);
+            imageData.getDataFrom(data, ctx);
+            resolve();
           });
         },
       }],
