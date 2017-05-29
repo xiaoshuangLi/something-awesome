@@ -58,7 +58,7 @@ const man = {
 
   update(ctx, cw, ch) {
     const { spots = [] } = this.state;
-    const res = spots[0].slice();
+    const res = Object.assign([], spots[0]);
     const { length } = voice;
 
     const imageData = ctx.createImageData(cw, ch);
@@ -68,7 +68,12 @@ const man = {
       const item = res[v];
       // item.color[3] = (voice[(item.y * 128) % length] + 0.5) * 255;
 
-      item.x = Math.ceil((centerX - item.x) * (voice[(item.y) % length]) + centerX);
+      item.x = Math.ceil((centerX - item.x) * (voice[(item.y) % length] + 2) + centerX);
+
+      if(v === 0) {
+        console.log(spots[v][0], voice[(item.y) % length]);
+        debugger;
+      }
     }
 
     imageData.getDataFrom(res, ctx);
