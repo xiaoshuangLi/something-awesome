@@ -69,7 +69,8 @@ function gPlugins(){
         reduce_vars: true,
       },
       beautify: false,
-      comments: false
+      comments: false,
+      sourceMap: true,
     }));
 
     res.push(webpackIsomorphicToolsPlugin);
