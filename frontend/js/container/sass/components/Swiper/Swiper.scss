@@ -1,7 +1,7 @@
 @import "frontend/css/func.scss";
 
-$list: ('./ed.jpeg', './cave.jpeg', './bluesky.jpeg'); //这里有一个问题，大图片过大的话解码影响页面css渲染，导致动画卡顿，这里过会再演示，如果我还记得。
-$list: ('./ed.jpeg', './cave.jpeg', './fight.jpg'); // 这里有一个数组储存滚动的三张图片。
+$list: ('http://otf5wn9lm.bkt.clouddn.com/ed.jpeg', 'http://otf5wn9lm.bkt.clouddn.com/cave.jpeg', 'http://otf5wn9lm.bkt.clouddn.com/bluesky.jpeg'); //这里有一个问题，大图片过大的话解码影响页面css渲染，导致动画卡顿，这里过会再演示，如果我还记得。
+$list: ('http://otf5wn9lm.bkt.clouddn.com/ed.jpeg', 'http://otf5wn9lm.bkt.clouddn.com/cave.jpeg', 'http://otf5wn9lm.bkt.clouddn.com/fight.jpg'); // 这里有一个数组储存滚动的三张图片。
 $list: append($list, nth($list, 1), comma); // 为了实现轮播的效果，必须要在数组尾部插入第一张图片，具体可见swiper组件
 $total: length($list); // 图片的总数量，包括插入的最后一张图，3张图需要轮播，插入一张的到的结果就是4
 
