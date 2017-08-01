@@ -125,14 +125,48 @@ module.exports = {
         test: /^(?!.*(\_b|\_inline)).*\.(jpe?g|png|gif|svg)$/i,
         use: [
           'file-loader?hash=sha512&digest=hex&name=img/[hash].[ext]',
-          'image-webpack-loader?bypassOnDebug&optimizationLevel=7&interlaced=false'
+          {
+            loader: 'image-webpack-loader',
+            query: {
+              mozjpeg: {
+                progressive: true,
+              },
+              gifsicle: {
+                interlaced: false,
+              },
+              optipng: {
+                optimizationLevel: 7,
+              },
+              pngquant: {
+                quality: '75-90',
+                speed: 3,
+              },
+            },
+          },
         ]
       },
       {
         test: /\_b\.(jpe?g|png|gif|svg)$/i,
         use: [
           'url-loader?name=img/[hash:8].[name].[ext]',
-          'image-webpack-loader?bypassOnDebug&optimizationLevel=7&interlaced=false'
+          {
+            loader: 'image-webpack-loader',
+            query: {
+              mozjpeg: {
+                progressive: true,
+              },
+              gifsicle: {
+                interlaced: false,
+              },
+              optipng: {
+                optimizationLevel: 7,
+              },
+              pngquant: {
+                quality: '75-90',
+                speed: 3,
+              },
+            },
+          },
         ]
       },
       {
@@ -140,10 +174,10 @@ module.exports = {
         use: pro ? ExtractTextPlugin.extract({
           fallback: 'style-loader', 
           use: ['css-loader?minimize', 'resolve-url-loader', 'sass-loader']
-        }) 
+        })
         : ['style-loader', 'css-loader?minimize', 'resolve-url-loader', 'sass-loader']
-      }
-    ]
+      },
+    ],
   },
 
   plugins: gPlugins()
