@@ -1,10 +1,9 @@
 @import "frontend/css/func.scss";
 
 $img: '~img/ed.jpeg';
-$img2: '~img/bluesky.jpeg';
 
 .page-home-test-render{
   padding-top: 100%;
   
-  @include bg(cover, $img2);
+  @include bg(cover, $img);
 }
