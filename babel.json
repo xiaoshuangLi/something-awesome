@@ -3,7 +3,8 @@
 
   "plugins": [
     "transform-runtime",
-    "add-module-exports"
+    "add-module-exports",
+    "transform-class-properties"
   ],
 
   "env": {

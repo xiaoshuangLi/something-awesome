@@ -4,6 +4,10 @@
     "browser": true,
     "node": true
   },
+  "parser": "babel-eslint",
+  "rules": {
+    "strict": 0
+  },
   "extends": [
     "airbnb",
     "./eslint/index.js"
