@@ -205,10 +205,3 @@ export function logSpeech(speech = [], notClear = false) {
     logCus(item.txt, item.type);
   });
 }
-export function getEles(selector) {
-  if (!selector) {
-    return [ document ];
-  }
-
-  return document.querySelectorAll(selector);
-}

@@ -1,0 +1,278 @@
+@import "frontend/css/func.scss";
+
+$bg: #a1affd;
+
+$brown: #feddca;
+$brown2: #febf80;
+$brown3: #dc5a27;
+
+$green: #c5e043;
+$green2: #42b720;
+
+$blue: #38d7fc;
+
+$baseHeight: 90px;
+$marioHeight: 88px;
+$jumpHeight: 100px;
+
+$font: 'http://otf5wn9lm.bkt.clouddn.com/mario.ttf';
+$font3: 'http://otf5wn9lm.bkt.clouddn.com/mario3.ttf';
+$baseImg: './base_b.svg';
+$marioImg: './mario.png';
+
+@font-face {
+  font-family: "super-mario";
+  src: url('#{$font}') format('truetype');
+}
+
+@font-face {
+  font-family: "super-mario-3";
+  src: url('#{$font3}') format('truetype');
+}
+
+@mixin mario {
+  .mario{
+    bottom: 85px;
+    left: 50vw;
+    transform: translate(-50%, 0);
+
+    @extend %absolute;
+
+    &.walk{
+      &:before{
+        animation: walk .5s infinite steps(1, end);
+      }
+    }
+
+    &.jump{
+      &:before{
+        animation: walk .5s infinite steps(1, end), jump 1s ease;
+      }
+    }
+
+    &:before{
+      content: '';
+      width: 44px;
+      height: $marioHeight;
+
+      @include bg(none, $marioImg, 0px);
+      @extend %inline-block;
+    }
+  }
+}
+
+@keyframes walk{
+  50%{
+    background-position-x: -45px;
+  }
+}
+
+@keyframes jump{
+  0%, 100% {
+    background-position: -145px 0px;
+    width: 50px;
+  }
+
+  50%{
+    transform: translate(0, #{-$jumpHeight});
+  }
+}
+
+@mixin marioBase {
+  .mario-base{
+    bottom: 0px;
+    height: $baseHeight;
+    background: #dc5a27;
+
+    @extend %fullwidth;
+    @include bg(45px 45px, $baseImg, 50%, 0);
+
+    background-repeat: repeat;
+  }
+}
+
+@function textShadowBottom($a: 0em, $b: 0.05em, $c: black) {
+  $res: 0 $a $b $c;
+  @return $res;
+}
+
+@mixin fontShadowBottom($a: 0.15em, $b: 0.001em, $c: black){
+  $max: floor($a / $b);
+  $shadows: ();
+
+  @for $i from 0 through $max {
+    $shadow: textShadowBottom($b * $i, $b, $c);
+    $shadows: append($shadows, $shadow, comma);
+  }
+
+  text-shadow: $shadows;
+}
+
+@function textShadowBottomRight($a: 0em, $b: 0.05em, $c: black) {
+  $res: $a $a $b $c;
+  @return $res;
+}
+
+@mixin fontShadowBottomRight($a: 0.15em, $b: 0.001em, $c: black, $d: 0.05em){
+  $max: floor($a / $b);
+  $shadows: ();
+
+  @for $i from 0 through $max {
+    $shadow: textShadowBottomRight($b * $i + $d, $b, $c);
+    $shadows: append($shadows, $shadow, comma);
+  }
+
+  text-shadow: $shadows;
+}
+
+%nail-style{
+  width: 6px;
+  height: 6px;
+  box-shadow: 0 0 2px white, 2.5px 2.5px 1px black, inset -1px -1px 2px rgba(0,0,0, .4);
+
+  @extend %inline-block;
+  @extend %bgwhite;
+}
+
+%font-style{
+  padding-top: 0.4em;
+  margin-left: 0.07em;
+}
+
+%font-style-3{
+  padding-top: 0.085em;
+  margin-left: 0.075em;
+}
+
+@mixin marioBoard {
+  .mario-board{
+    width: 360px;
+    padding-bottom: 22.5vw;
+    background: $brown3;
+    color: $brown;
+    border-radius: 3px;
+    font-family: "super-mario";
+
+    top: 10%;
+    left: 50vw;
+    box-shadow: 0px -3px 0.5px white, -3px 0px 0.5px white, 0px 3px 0.5px black, 3px 0px 0.5px black;
+    transform: translate(-50%, 0);
+
+    @extend %absolute;
+
+    .title{
+      font-size: 100px;
+      line-height: 1.25;
+      text-align: center;
+      letter-spacing: 0.1em;
+
+      @extend %font-style;
+      @extend %percenter;
+      @include fontShadowBottom;
+    }
+
+    .nails{
+      position: absolute;
+      left: 20px;
+      right: 20px;
+
+      &.top{
+        top: 20px;
+      }
+
+      &.bottom{
+        bottom: 25px;
+      }
+
+      &:before, &:after{
+        content: '';
+        position: absolute;
+
+        @extend %nail-style;
+      }
+
+      &:before{
+        left: 0;
+      }
+
+      &:after{
+        right: 0;
+      }
+    }
+  }
+}
+
+$w: 48px;
+$halfW: $w/2;
+$site: $halfW - 6px;
+
+@function boxShadow($a, $b) {
+  @return $a $b 0 black;
+}
+
+@mixin marioQuestions{
+  .mario-questions{
+    bottom: $baseHeight + $jumpHeight + $marioHeight;
+    @extend %absolute;
+
+    .question-posiiton{
+      bottom: 0;
+      @extend %absolute;
+
+      @for $i from 1 through 20 {
+        &:nth-child(#{$i}) {
+          left: 50vw + $i * 100vw;
+          transform: translate(-50%, 0);
+        }
+      }
+
+      .question {
+        width: $w;
+        height: $w;
+        background: $brown2;
+        color: $brown3;
+        box-shadow: -3px 0 0 $brown3, 0 -3px 0 $brown3, 0 3px 0 black, -3px 3px 0 black, 3px 3px 0 black, 3px 0 0 black;
+
+        &:before{
+          font-size: 30px;
+          text-shadow: 3px 3px 0px black;
+
+          @extend %font-style-3;
+          @extend %percenter;
+        }
+
+        &:after{
+          content: '';
+          width: 3px;
+          height: 3px;
+          background: transparent;
+          box-shadow: boxShadow($site, $site), boxShadow(-$site, $site), boxShadow($site, -$site), boxShadow(-$site, -$site); 
+
+          @extend %inline-block;
+          @extend %percenter;
+        }
+
+        .title{
+          top: -30px;
+
+          @extend %wnowrap;
+          @extend %percenter;
+          @include fontShadowBottomRight;
+        }
+      }
+    }
+  }
+}
+
+.pages-sass-mario-render{
+  background: $bg;
+  min-height: 100vh;
+  font-family: "super-mario-3";
+
+  @extend %relative;
+
+  @include mario;
+  @include marioBase;
+  @include marioBoard;
+  @include marioQuestions;
+}

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="45" height="45" preserveAspectRatio="xMidYMid meet">
+  <path d="M24 0 L 24 32" stroke="black" stroke-width="3" fill="none"/>
+  <path d="M21 32 L 21 38" stroke="black" stroke-width="3" fill="none"/>
+  <path d="M10 39 L 20 39" stroke="black" stroke-width="3" fill="none"/>
+  <path d="M5 36 L 10 36" stroke="black" stroke-width="3" fill="none"/>
+  <path d="M0 33 L 5 33" stroke="black" stroke-width="3" fill="none"/>
+  <path d="M20 41 L 20 48" stroke="black" stroke-width="3" fill="none"/>
+  <path d="M3 48 L 20 48" stroke="black" stroke-width="3" fill="none"/>
+
+  <path d="M30 14 L 30 21" stroke="black" stroke-width="3" fill="none"/>
+  <path d="M29 21 L 45 21" stroke="black" stroke-width="3" fill="none"/>
+  <path d="M47 3 L 47 20" stroke="black" stroke-width="3" fill="none"/>
+  <path d="M47 23 L 47 45" stroke="black" stroke-width="3" fill="none"/>
+  <path d="M25 48 L 45 48" stroke="black" stroke-width="3" fill="none"/>
+
+  <path d="M2 1 L 21 1" stroke="#fddcc7" stroke-width="3" fill="none"/>
+  <path d="M1 3 L 1 31" stroke="#fddcc7" stroke-width="3" fill="none"/>
+  <path d="M1 34 L 1 47" stroke="#fddcc7" stroke-width="3" fill="none"/>
+  <path d="M5 39 L 10 39" stroke="#fddcc7" stroke-width="3" fill="none"/>
+  <path d="M0 36 L 5 36" stroke="#fddcc7" stroke-width="3" fill="none"/>
+  <path d="M10 42 L 18 42" stroke="#fddcc7" stroke-width="3" fill="none"/>
+  <path d="M24 1 L 47 1" stroke="#fddcc7" stroke-width="3" fill="none"/>
+  <path d="M27 0 L 27 18" stroke="#fddcc7" stroke-width="3" fill="none"/>
+  <path d="M24 31 L 24 36" stroke="#fddcc7" stroke-width="3" fill="none"/>
+  <path d="M23 40 L 23 47" stroke="#fddcc7" stroke-width="3" fill="none"/>
+  <path d="M27 22 L 27 31" stroke="#fddcc7" stroke-width="3" fill="none"/>
+  <path d="M29 23 L 45 23" stroke="#fddcc7" stroke-width="3" fill="none"/>
+</svg>
