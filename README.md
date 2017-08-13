@@ -3,7 +3,7 @@ something-awesome
 
 Test something aswesome in the web, like svg, css, canvas.
 
-How to start?
+Quick start
 ```bash
  npm install
  npm run build
