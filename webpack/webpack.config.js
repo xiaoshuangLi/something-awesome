@@ -26,6 +26,31 @@ delete babelLoaderQuery.env;
 var WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
 var webpackIsomorphicToolsPlugin = new WebpackIsomorphicToolsPlugin(require('./webpack-isomorphic-tools'));
 
+var postLoader = {
+  loader: 'postcss-loader',
+  options: {
+    plugins() {
+      return [
+        require('autoprefixer')({
+          browsers: [
+            'last 3 versions',
+            'ie >= 9',
+            'ie_mob >= 10',
+            'ff >= 30',
+            'chrome >= 34',
+            'safari >= 6',
+            'opera >= 12.1',
+            'ios >= 6',
+            'android >= 4.4',
+            'bb >= 10',
+            'and_uc 9.9',
+          ],
+        }),
+      ];
+    },
+  },
+};
+
 function gPlugins(){
   var res = [
     new webpack.optimize.CommonsChunkPlugin({ name: 'vendors' }),
@@ -173,9 +198,9 @@ module.exports = {
         test: /\.scss$/,
         use: pro ? ExtractTextPlugin.extract({
           fallback: 'style-loader', 
-          use: ['css-loader?minimize', 'resolve-url-loader', 'sass-loader']
+          use: ['css-loader?minimize', 'resolve-url-loader', postLoader,'sass-loader']
         })
-        : ['style-loader', 'css-loader?minimize', 'resolve-url-loader', 'sass-loader']
+        : ['style-loader', 'css-loader?minimize', 'resolve-url-loader', postLoader,'sass-loader']
       },
     ],
   },
