@@ -8,7 +8,7 @@ class Test extends Component {
     this.test();
 
     return (
-      <div className="page-home-test-render">
+      <div className="page-home-test-render example">
         test
       </div>
     );

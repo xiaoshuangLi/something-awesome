@@ -46,6 +46,7 @@ var postLoader = {
             'and_uc 9.9',
           ],
         }),
+        require('postcss-write-svg')(),
       ];
     },
   },

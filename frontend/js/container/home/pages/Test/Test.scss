@@ -2,6 +2,15 @@
 
 $img: '~img/ed.jpeg';
 
+@mixin line($color: blue) {
+  border-image: url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60' width='3px' height='3px' preserveAspectRatio='xMidYMid meet'><rect x='10' y='10' width='40' height='40' fill='#{$color}'/></svg>") 1;
+}
+
+.example {
+  border-top: 1px solid transparent;
+  @include line;
+}
+
 .page-home-test-render{
   padding-top: 100%;
   
