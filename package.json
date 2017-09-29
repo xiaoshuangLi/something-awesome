@@ -72,6 +72,7 @@
     "html-webpack-plugin": "^2.22.0",
     "image-webpack-loader": "^3.0.0",
     "jsx-loader": "^0.13.2",
+    "mathsass": "^0.10.1",
     "node-sass": "^4.5.2",
     "postcss": "^6.0.8",
     "postcss-extend": "^1.0.5",
