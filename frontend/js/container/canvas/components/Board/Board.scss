@@ -1,0 +1,162 @@
+@import "frontend/css/func.scss";
+
+$list: (
+  '加载中....',
+  '等一哈，旁友.',
+  '吃了没呀？',
+  '饿死你丫的',
+);
+
+$length: length($list);
+
+$durationNum: 1;
+$duration: $durationNum * 1.2s;
+
+$boardTop: 50px;
+
+$textShadow: 100px;
+
+$ballLeft: 150px;
+$ballWidth: 5px;
+
+$shadowLeft: 40px;
+
+@mixin boardbody {
+  .board-body {
+    animation: $duration board infinite cubic-bezier(0.18, 0.89, 0.32, 1.28) alternate;
+
+    &:before,
+    &:after {
+      content: '';
+      left: 0;
+      top: 0;
+
+      @extend %absolute;
+      @extend %inline-block;
+    }
+
+    &:before {
+      content: 'I am loading';
+      color: transparent;
+      font-size: 20px;
+      font-weight: bold;
+      text-shadow: 0 0 0 white;
+      animation: $duration * 2 * $length boardText infinite linear;
+
+      @extend %wnowrap;
+      @extend %percenter;
+    }
+
+    &:after {
+      background: transparent;
+      width: 2px;
+      height: 2px;
+      margin-left: -$ballLeft;
+      animation: $duration boardBall infinite linear alternate;
+
+      @extend %border-radius-50;
+    }
+  }
+}
+
+@mixin boardShadow {
+  .board-shadow {
+    margin-top: $boardTop + 10px;
+    width: 2px;
+    height: 2px;
+    margin-left: -$shadowLeft;
+    animation: $duration boardShadow infinite cubic-bezier(0.18, 0.89, 0.32, 1.28) alternate;
+
+
+    @extend %percenter;
+    @extend %border-radius-50;
+
+    transform: translate(-50%, -50%) rotateX(-60deg);
+  }
+}
+
+.components-sass-board-render {
+  transition: 0.2s;
+  opacity: 0;
+
+  @extend %fwhite;
+  @extend %tcenter;
+  @extend %percenter;
+
+  @include boardbody;
+  @include boardShadow;
+
+  &.active {
+    opacity: 1;
+  }
+}
+
+@keyframes board {
+  0% {
+    transform: translate(-50%, $boardTop);
+  }
+
+  50%,
+  100% {
+    transform: translate(-50%, -$boardTop);
+  }
+}
+
+@keyframes boardText {
+  @for $i from 1 through $length {
+    $base: ($i - 1) / $length;
+    $content: nth($list, $i);
+
+    $per: 1/$length;
+
+    $step1: $base;
+    $step2: $base + 0.2 * $per;
+    $step3: $base + 0.5 * $per;
+    $step4: $step2 + 0.5 * $per;
+    $step5: $base + $per;
+
+    $perStep1: percentage($step1);
+    $perStep2: percentage($step2);
+    $perStep3: percentage($step3);
+    $perStep4: percentage($step4);
+    $perStep5: percentage($step5);
+
+    #{$perStep1},
+    #{$perStep5} {
+      content: $content;
+      text-shadow: 0 0 $textShadow transparent;
+    }
+
+    #{$perStep2},
+    #{$perStep3},
+    #{$perStep4} {
+      content: $content;
+      text-shadow: 0 0 0 white;
+    }
+  }
+}
+
+@keyframes boardBall {
+  0%,
+  5% {
+    box-shadow: $ballLeft 0 0 $ballWidth rgba(white, .6);
+  }
+
+  75% {
+    box-shadow: $ballLeft 0 $ballLeft $ballWidth rgba(white, 3);
+  }
+
+  100% {
+    box-shadow: $ballLeft 0 $ballLeft $ballWidth transparent;
+  }
+}
+
+@keyframes boardShadow {
+  0% {
+    box-shadow: $shadowLeft 0 5px $ballWidth rgba(white, .3);
+  }
+  
+  100% {
+    box-shadow: $shadowLeft 0 $shadowLeft $ballWidth transparent;
+  }
+}

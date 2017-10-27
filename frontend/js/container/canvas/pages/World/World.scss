@@ -1,0 +1,17 @@
+@import "frontend/css/func.scss";
+
+.pages-canvas-world-render {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: black;
+
+  .canvas {
+    width: 100vw;
+    height: 100vh;
+
+    @extend %full;
+  }
+}

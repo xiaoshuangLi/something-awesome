@@ -29,6 +29,14 @@ const rootRoute = {
         });
       },
     },
+    {
+      path: 'world',
+      getComponent(location, cb) {
+        require.ensure([], (require) => {
+          cb(null, require('./pages/World'));
+        });
+      },
+    },
   ],
 };
 

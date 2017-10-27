@@ -19,6 +19,16 @@ const list = [
         desc: '走马灯',
         path: '/sass/swiper',
       },
+      {
+        title: 'Mario',
+        desc: '马里奥',
+        path: '/sass/mario',
+      },
+      // {
+      //   title: 'Room',
+      //   desc: 'webgl',
+      //   path: '/sass/room',
+      // },
     ],
   },
   {
@@ -38,6 +48,16 @@ const list = [
         title: 'Menu',
         desc: '黏黏黏',
         path: '/svg/menu',
+      },
+    ],
+  },
+  {
+    title: 'Canvas',
+    list: [
+      {
+        title: 'World',
+        desc: ' webgl尝试',
+        path: '/canvas/world',
       },
     ],
   },
