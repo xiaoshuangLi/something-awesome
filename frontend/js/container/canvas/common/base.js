@@ -1,8 +1,21 @@
+import 'three';
+
+THREE.Matrix4.prototype.watchAt = function(eye, center, up) {
+  this.makeTranslation(eye.x, eye.y, eye.z);
+  this.lookAt(eye, center, up);
+
+  return this.getInverse(this);
+};
+
 Object.defineProperties(Array.prototype, {
   fakeForEach: {
     value(cb) {
       const list = this;
       const { length = 0 } = list;
+
+      if (!length) {
+        return list;
+      }
 
       for (let v = 0; v < length; v += 1) {
         cb(list[v], v);
@@ -19,7 +32,7 @@ Object.defineProperties(Array.prototype, {
         res.push(cb(item));
       });
 
-      return list;
+      return res;
     },
   },
 });
@@ -134,13 +147,52 @@ const animate = func => (...list) => {
   let id;
 
   function run() {
-    func(...list);
-
     id && window.cancelAnimationFrame(id);
     id = window.requestAnimationFrame(run);
+
+    func(...list);
   }
 
   run();
+};
+
+
+const getIfFunc = (res, ...args) => {
+  return typeof res === 'function' ? res(...args) : res;
+};
+
+const worldBuild = (viewMat = new THREE.Matrix4(), cb) => (worldMat = new THREE.Matrix4()) => {
+  const worldView = new THREE.Matrix4();
+  worldView.multiplyMatrices(viewMat, worldMat);
+
+  const worldInverse = new THREE.Matrix4();
+  worldInverse.getInverse(worldMat);
+
+  const worldInverseTranspose = worldInverse.transpose();
+
+  cb && cb(worldView, worldInverseTranspose);
+};
+
+const modelRender = ({ gl, program, setMat } = {}) => ({ tree = {}, now = 0 } = {}) => {
+  function startMap() {
+    const { children = [], mats = [], models = [], baseMat, parentMat } = tree;
+
+    const worldMat = new THREE.Matrix4().multiply(baseMat || parentMat);
+
+    mats.fakeForEach(mat => worldMat.multiply(getIfFunc(mat, now)));
+    setMat && setMat(worldMat);
+
+    models.fakeForEach(model => model && model.render(gl, program));
+
+    children.fakeForEach((child) => {
+      child.parentMat = worldMat;
+      tree = child;
+
+      startMap();
+    });
+  }
+
+  startMap();
 };
 
 export default {
@@ -150,4 +202,7 @@ export default {
   patchAttributes,
   setIndexBuffer,
   animate,
+  getIfFunc,
+  worldBuild,
+  modelRender,
 };

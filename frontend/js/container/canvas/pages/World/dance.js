@@ -1,9 +1,9 @@
 import 'three';
 
 import { createProgramFromSources } from '../../common/func';
-import { resize, launch, patchUniforms, animate } from '../../common/base';
+import { resize, launch, patchUniforms, animate, worldBuild, modelRender } from '../../common/base';
 
-import Cube from '../../model/Cube';
+import beauties from './beauties';
 
 const vShader = `
   attribute vec4 a_position;
@@ -46,174 +46,118 @@ const fShader = `
   }
 `;
 
-const table = new Cube({
-  w: 120,
-  h: 2,
-  l: 65,
-  color: [0.85, 0.85, 0.85, 1.0],
-});
+// const rotationSave = {
+//   alpha: 0,
+//   beta: 0,
+//   gamma: 0,
+// };
 
-const tableLeg = new Cube({
-  w: 5,
-  h: 60,
-  l: 5,
-  color: [0.85, 0.85, 0.85, 1.0],
-});
+// const motionSave = {
+//   xSave: {
+//     spped: 0,
+//     distance: 0,
+//     all: 0,
+//   },
+//   ySave: {
+//     spped: 0,
+//     distance: 0,
+//     all: 0,
+//   },
+//   zSave: {
+//     spped: 0,
+//     distance: 0,
+//     all: 0,
+//   },
+//   rotation: {
+//     alpha: 0,
+//     beta: 0,
+//     gamma: 0,
+//   },
+// };
 
-const macPlane = new Cube({
-  w: 30,
-  h: 1,
-  l: 22,
-  // color: [0.7, 0.7, 0.7, 1.0],
-  color: [0.7, 0.7, 0.7, 1.0],
-});
+// const time = 0.5;
 
-const keyBoard = new Cube({
-  w: 26,
-  h: 0,
-  l: 14,
-  color: [0.2, 0.2, 0.2, 1.0],
-});
+// const calcMotion = (save = {}, a = 0, rotationRate = {}) => {
+//   const { alpha = 0, beta = 0, gamma = 0 } = rotationRate;
+//   let { speed = 0 } = save;
 
-const macScreen = new Cube({
-  w: 28,
-  h: 0,
-  l: 20,
-  color: [0.2, 0.2, 0.2, 1.0],
-});
+//   // a -= 0.02;
 
-const screenContainer = new Cube({
-  w: 36,
-  h: 60,
-  l: 3,
-  color: [0.6, 0.6, 0.6, 1.0],
-});
+//   // if (Math.abs(speedNow) > 20 || Math.abs(a) < 0.5) {
+//   //   a =  speed * -0.5;
+//   // }
 
-const screen = new Cube({
-  w: 32,
-  h: 56,
-  l: 0,
-  color: [0.2, 0.2, 0.2, 1.0],
-});
+//   // a *= Math.cos(rotationSave.alpha);
 
-const baseTree = {
-  mats: [
-    now => new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0).normalize(), now),
-  ],
-  baseMat: new THREE.Matrix4().makeTranslation(0, 0, -50),
-  models: [table],
-  children: [
-    {
-      mats: [
-        new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), THREE.Math.degToRad(10)),
-        new THREE.Matrix4().makeTranslation(-15, 1, 5),
-      ],
-      models: [macPlane],
-      children: [
-        {
-          mats: [
-            new THREE.Matrix4().makeTranslation(0, 10, -16.5),
-            new THREE.Matrix4().makeRotationX(45),
-          ],
-          models: [macPlane],
-          children: [
-            {
-              mats: [
-                new THREE.Matrix4().makeTranslation(0, 0.55, 0),
-              ],
-              models: [macScreen],
-            },
-          ],
-        },
-        {
-          mats: [
-            new THREE.Matrix4().makeTranslation(0.25, 0.55, 0),
-          ],
-          models: [keyBoard],
-        },
-      ],
-    },
-    {
-      mats: [
-        new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), THREE.Math.degToRad(-15)),
-        new THREE.Matrix4().makeTranslation(30, 30, -5),
-      ],
-      models: [screenContainer],
-      children: [{
-        mats: [ new THREE.Matrix4().makeTranslation(0.5, 1, 2)],
-        models: [screen],
-      }],
-    },
-    {
-      mats: [new THREE.Matrix4().makeTranslation(-54, -30, 26)],
-      models: [tableLeg],
-    },
-    {
-      mats: [new THREE.Matrix4().makeTranslation(-54, -30, -26)],
-      models: [tableLeg],
-    },
-    {
-      mats: [new THREE.Matrix4().makeTranslation(54, -30, -26)],
-      models: [tableLeg],
-    },
-    {
-      mats: [new THREE.Matrix4().makeTranslation(54, -30, 26)],
-      models: [tableLeg],
-    },
-  ],
-};
+//   // if (Math.abs(a) < 1) {
+//   //   a = -speed;
+//   // }
 
-const getIfFunc = (res, ...args) => {
-  return typeof res === 'function' ? res(...args) : res;
-};
+//   let speedNow = speed + a * time;
+//   const distanceMore = speed * time + a * time * time * 0.5;
 
-const mapTree = ({ gl, program, setMat } = {}) => ({ tree = {}, parent = {}, now = 0 } = {}) => {
-  function startMap() {
-    const { children = [], mats = [], models = [], baseMat } = tree;
-    const worldMat = (baseMat || parent.baseMat).clone();
+//   // speedNow = speedNow === speed  ? -0.5 * speedNow : speedNow;
 
-    mats.fakeForEach((mat) => {
-      worldMat.multiply(getIfFunc(mat, now));
+//   // const speedNow = -1 * a * Math.PI / (alpha * 180);
+//   // const distanceMore = (speed + speedNow) * time * 0.5;
+
+//   save.speed = speedNow;
+//   save.distance = distanceMore;
+//   save.all += distanceMore;
+// };
+
+// const motionListener = (cb) => {
+//   window.addEventListener('devicemotion', (e) => {
+//     const { acceleration = {}, rotationRate = {}, accelerationIncludingGravity = {} } = e;
+//     const { x, y, z } = acceleration;
+//     const { alpha, beta, gamma } = rotationRate;
+//     cb && cb(acceleration);
+
+//     calcMotion(motionSave.xSave, x, rotationRate);
+//     calcMotion(motionSave.ySave, y, rotationRate);
+//     calcMotion(motionSave.zSave, z, rotationRate);
+
+//     motionSave.rotation = {
+//       alpha,
+//       beta,
+//       gamma,
+//     };
+
+//     document.querySelector('.coord').innerHTML = `
+//       <div>zSpeed: ${motionSave.zSave.speed.toFixed(2)};</div> 
+//       <div>zAll: ${motionSave.zSave.all.toFixed(2)};</div> 
+//       <div>x: ${x.toFixed(2)};</div> 
+//       <div>y: ${y.toFixed(2)};</div> 
+//       <div>z: ${z.toFixed(2)};</div>
+//       <div>G.x: ${accelerationIncludingGravity.x.toFixed(2)};</div> 
+//       <div>G.y: ${accelerationIncludingGravity.y.toFixed(2)};</div> 
+//       <div>G.z: ${accelerationIncludingGravity.z.toFixed(2)};</div>
+//       <div>alpha: ${Math.floor(alpha)};</div>
+//       <div>beta: ${Math.floor(beta)};</div>
+//       <div>gamma: ${Math.floor(gamma)};</div>
+//     `;
+//   }, false);
+// };
+
+const orientationListener = (cb) => {
+  window.addEventListener('deviceorientation', (e) => {
+    const { alpha = 0, beta = 0, gamma = 0 } = e;
+
+    cb && cb({
+      alpha,
+      beta,
+      gamma,
     });
-
-    setMat && setMat(worldMat);
-    models.fakeForEach(model => model && model.render(gl, program));
-
-    children.fakeForEach((child) => {
-      child.baseMat = worldMat;
-      tree = child;
-      parent = tree;
-
-      startMap();
-    });
-  }
-
-  startMap();
+  }, false);
 };
 
-const setWorld = (gl, program, viewProjectionMatrix = new THREE.Matrix4()) => (worldMatrix = new THREE.Matrix4()) => {
-  if (!gl || !program) {
-    return null;
-  }
+const getViewMat = (camera, target, up, projectionMatrix) => {
+  const viewMatrix = new THREE.Matrix4().watchAt(camera, target, up);
 
-  const worldView = new THREE.Matrix4();
-  worldView.multiplyMatrices(viewProjectionMatrix, worldMatrix);
+  const viewProjectionMatrix = new THREE.Matrix4();
+  viewProjectionMatrix.multiplyMatrices(projectionMatrix.projectionMatrix, viewMatrix);
 
-  const worldInverse = new THREE.Matrix4();
-  worldInverse.getInverse(worldMatrix);
-
-  const worldInverseTranspose = worldInverse.transpose();
-
-  patchUniforms(gl, program, {
-    u_world: {
-      func: gl.uniformMatrix4fv,
-      args: [false, worldView.elements],
-    },
-    u_worldInverse: {
-      func: gl.uniformMatrix4fv,
-      args: [false, worldInverseTranspose.elements],
-    },
-  });
+  return viewProjectionMatrix;
 };
 
 const dance = (selector) => {
@@ -233,30 +177,8 @@ const dance = (selector) => {
   launch(gl);
   const program = createProgramFromSources(gl, [vShader, fShader]);
 
-  const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-  const zNear = 1;
-  const zFar = 2000;
-
-  const light = new THREE.Vector3(0, 1, 1);
-  light.normalize();
-
+  const light = new THREE.Vector3(0, 1, 1).normalize();
   const eye = new THREE.Vector3(0, 1, 1);
-
-  const projectionMatrix = new THREE.PerspectiveCamera(60, aspect, zNear, zFar);
-
-  const camera = new THREE.Vector3(60, 105, 200);
-  const target = new THREE.Vector3(0, 35, 0);
-  const up = new THREE.Vector3(0, 1, 0);
-
-  const cameraMatrix = new THREE.Matrix4();
-  cameraMatrix.makeTranslation(camera.x, camera.y, camera.z);
-  cameraMatrix.lookAt(camera, target, up);
-
-  const viewMatrix = new THREE.Matrix4();
-  viewMatrix.getInverse(cameraMatrix);
-
-  const viewProjectionMatrix = new THREE.Matrix4();
-  viewProjectionMatrix.multiplyMatrices(projectionMatrix.projectionMatrix, viewMatrix);
 
   patchUniforms(gl, program, {
     u_light: {
@@ -269,12 +191,84 @@ const dance = (selector) => {
     },
   });
 
-  const setWorldBase = setWorld(gl, program, viewProjectionMatrix);
-  const mapTreeBase = mapTree({
+  const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+  const zNear = 1;
+  const zFar = 2000;
+  const projectionMatrix = new THREE.PerspectiveCamera(60, aspect, zNear, zFar);
+
+  const camera = new THREE.Vector3(0, 35, 200);
+  const target = new THREE.Vector3(0, 35, 0);
+  const up = new THREE.Vector3(0, 1, 0);
+
+  const worldBaseCb = (worldView, worldInverseTranspose) => {
+    patchUniforms(gl, program, {
+      u_world: {
+        func: gl.uniformMatrix4fv,
+        args: [false, worldView.elements],
+      },
+      u_worldInverse: {
+        func: gl.uniformMatrix4fv,
+        args: [false, worldInverseTranspose.elements],
+      },
+    });
+  };
+
+  let setWorldBase = worldBuild(getViewMat(camera, target, up, projectionMatrix), worldBaseCb);
+
+  let modelRenderBase = modelRender({
     setMat: setWorldBase,
     gl,
     program,
   });
+
+  orientationListener(({ alpha = 0, beta = 0, gamma = 0 } = {}) => {
+    beta -= 90;
+
+    const matAlpha = new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(alpha));
+    const matGamma = new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(gamma));
+    const matBeta = new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(beta));
+
+    const direction = camera.clone().negate().add(target);
+    direction.applyMatrix4(matAlpha);
+    direction.applyMatrix4(matBeta);
+    direction.applyMatrix4(matGamma);
+
+    const newTarget = camera.clone().add(direction);
+
+    const viewMat = getViewMat(camera, newTarget, up, projectionMatrix);
+
+    setWorldBase = worldBuild(viewMat, worldBaseCb);
+
+    modelRenderBase = modelRender({
+      setMat: setWorldBase,
+      gl,
+      program,
+    });
+  });
+
+
+  // motionListener(() => {
+  //   const { xSave, ySave, zSave, rotation = {} } = motionSave;
+  //   const { alpha, beta, gamma } = rotation;
+
+  //   const motionVec = new THREE.Vector3(xSave.distance, ySave.distance, zSave.distance);
+
+  //   const matAlpha = new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(alpha));
+  //   const matGamma = new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(gamma - 90));
+  //   const matBeta = new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(beta));
+
+  //   const direction = new THREE.Matrix4();
+  //   direction.multiply(matAlpha);
+  //   direction.multiply(matBeta);
+  //   direction.multiply(matGamma);
+
+  //   // motionVec.applyMatrix4(direction);
+
+  //   const motionMat = new THREE.Matrix4().makeTranslation(0, 0, -zSave.distance);
+
+  //   // const motionMat = new THREE.Matrix4().setPosition(motionVec);
+  //   beauties.baseMat.multiply(motionMat);
+  // });
 
   let count = 0;
 
@@ -282,20 +276,12 @@ const dance = (selector) => {
     count += 0.01;
     const now = count % 360;
 
-    // const worldMatrix = new THREE.Matrix4();
+    launch(gl);
 
-    // worldMatrix.makeTranslation(0, 0, 0);
-    // worldMatrix.makeRotationAxis((new THREE.Vector3(1, 0, 0)).normalize(), now);
-
-    // setWorldBase(worldMatrix);
-    // table.render(gl, program);
-
-    mapTreeBase({
-      tree: baseTree,
+    modelRenderBase({
+      tree: beauties,
       now,
     });
-
-    resize(gl);
 
     gl.flush();
   })();
