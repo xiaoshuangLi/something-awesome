@@ -158,6 +158,12 @@ export function getStyles(ele = '', attr = '') {
   return res[attr] || ''
 }
 
+export function getEle(selector = window) {
+  selector = typeof selector === 'string' ? document.querySelector(selector) : selector;
+
+  return selector;
+}
+
 export function getEles(selector) {
   if (!selector) {
     return [ document ];
