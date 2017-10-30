@@ -57,7 +57,6 @@ class World extends Component {
       <div className={cls}>
         { this.renderBoard() }
         <canvas id="world" className="canvas" />
-        <div className="coord" />
       </div>
     );
   }

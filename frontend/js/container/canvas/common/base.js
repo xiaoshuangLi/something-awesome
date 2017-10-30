@@ -236,10 +236,81 @@ const getFirstTouch = (e) => {
   return oneTouch;
 };
 
+const addPCControl = (setting = {}, models, cb) => {
+  const { view: { eye, target, up } = {}, cameraMat } = setting;
+  const { innerWidth = 0, innerHeight = 0 } = window;
+
+  let lastClientX = 0;
+  let lastClientY = 0;
+
+  return batchAddListeners([
+    {
+      listeners: 'click',
+      cb(e) {
+        const ele = e.target;
+
+        ele.requestPointerLock =
+          ele.requestPointerLock ||
+          ele.webkitRequestPointerLock ||
+          ele.mozRequestPointerLock;
+          
+        ele.requestPointerLock();
+      },
+    },
+    {
+      listeners: 'mouseenter',
+      cb(e) {
+        const { clientX = 0, clientY = 0 } = e;
+
+        lastClientX = clientX;
+        lastClientY = clientY;
+      },
+    },
+    {
+      listeners: 'mousemove',
+      cb(e) {
+        const { clientX = 0, clientY = 0 } = e;
+
+        const angleX = (clientX - lastClientX) * Math.PI / innerWidth;
+        const angleY = (clientY - lastClientY) * Math.PI / innerHeight;
+
+        const matY = new THREE.Matrix4().makeRotationY(angleY);
+        const matX = new THREE.Matrix4().makeRotationX(angleX);
+
+        Raven.watch({
+          angleX,
+          angleY,
+          clientX,
+          clientY,
+          lastClientX,
+          lastClientY,
+        });
+
+        lastClientX = clientX;
+        lastClientY = clientY;
+
+        const direction = new THREE.Vector3().subVectors(target, eye);
+        direction.applyMatrix4(matY);
+        direction.applyMatrix4(matX);
+
+        const newTarget = eye.clone().add(direction);
+        const newViewMat = getViewMat({
+          cameraMat,
+          view: {
+            eye,
+            target: newTarget,
+            up,
+          },
+        });
+
+        cb && cb(newViewMat);
+      },
+    },
+  ]);
+};
+
 const addMobileControl = (setting = {}, models, cb) => {
   const { view: { eye, target, up } = {}, cameraMat } = setting;
-
-  addListeners('touchmove', e => e.preventDefault())();
 
   let lastClientX = 0;
   let lastClientY = 0;
@@ -307,7 +378,7 @@ const addMobileControl = (setting = {}, models, cb) => {
         const matY = new THREE.Matrix4().makeRotationY(angleY);
         const matX = new THREE.Matrix4().makeRotationX(angleX);
 
-        const direction = eye.clone().negate().add(target);
+        const direction = new THREE.Vector3().subVectors(target, eye);
         direction.applyMatrix4(matY);
         direction.applyMatrix4(matX);
 
@@ -339,4 +410,5 @@ export default {
   modelRender,
   getViewMat,
   addMobileControl,
+  addPCControl,
 };

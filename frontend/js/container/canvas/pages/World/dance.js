@@ -1,7 +1,7 @@
 import 'three';
 
 import { createProgramFromSources } from '../../common/func';
-import { launch, patchUniforms, animate, worldBuild, modelRender, getViewMat, addMobileControl } from '../../common/base';
+import { launch, patchUniforms, animate, worldBuild, modelRender, getViewMat, addMobileControl, addPCControl } from '../../common/base';
 
 import beauties from './beauties';
 
@@ -124,6 +124,15 @@ const dance = (selector) => {
       program,
     });
   })();
+
+  addPCControl(setting, beauties, (newViewMat) => {
+    setWorldBase = worldBuild(newViewMat, worldBaseCb);
+    modelRenderBase = modelRender({
+      setMat: setWorldBase,
+      gl,
+      program,
+    });
+  })('#world');
 
   let count = 0;
 
