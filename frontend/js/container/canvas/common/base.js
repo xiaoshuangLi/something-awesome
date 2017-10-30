@@ -1,5 +1,9 @@
 import 'three';
 
+import { getEle } from 'js/common';
+
+import Raven from 'js/components/Raven';
+
 THREE.Matrix4.prototype.watchAt = function(eye, center, up) {
   this.makeTranslation(eye.x, eye.y, eye.z);
   this.lookAt(eye, center, up);
@@ -36,6 +40,29 @@ Object.defineProperties(Array.prototype, {
     },
   },
 });
+
+const getArray = (res) => {
+  return res = Array.isArray(res) ? res : [res];
+};
+
+const addListeners = (listeners, cb) => (ele) => {
+  ele = getEle(ele);
+  listeners = getArray(listeners);
+
+  listeners.fakeForEach(
+    listener => ele.addEventListener(listener, e => cb(e, listener), false)
+  );
+};
+
+const batchAddListeners = obj => (ele) => {
+  obj = getArray(obj);
+
+  obj.fakeForEach((item = {}) => {
+    const { listeners, cb } = item;
+
+    addListeners(listeners, cb)(ele);
+  });
+};
 
 const runWin = (func) => {
   if (typeof window === 'undefined') {
@@ -195,6 +222,111 @@ const modelRender = ({ gl, program, setMat } = {}) => ({ tree = {}, now = 0 } = 
   startMap();
 };
 
+const getViewMat = (setting = {}) => {
+  const { view: { eye, target, up } = {}, cameraMat } = setting;
+  const viewMat = new THREE.Matrix4().watchAt(eye, target, up);
+
+  return cameraMat.clone().multiply(viewMat);
+};
+
+const getFirstTouch = (e) => {
+  const touches = e.touches || e.targetTouches || [];
+  const oneTouch = touches[0] || {};
+
+  return oneTouch;
+};
+
+const addMobileControl = (setting = {}, models, cb) => {
+  const { view: { eye, target, up } = {}, cameraMat } = setting;
+
+  addListeners('touchmove', e => e.preventDefault())();
+
+  let lastClientX = 0;
+  let lastClientY = 0;
+
+  const roatationSave = {
+    beta: 0,
+    alpha: 0,
+    gamma: 0,
+  };
+
+  return batchAddListeners([
+    {
+      listeners: 'touchstart',
+      cb(e) {
+        const oneTouch = getFirstTouch(e);
+        const { clientX = 0, clientY = 0 } = oneTouch;
+
+        lastClientX = clientX;
+        lastClientY = clientY;
+      },
+    },
+    // {
+    //   listeners: 'devicemotion',
+    //   cb(e) {
+    //     const { accelerationIncludingGravity = {} } = e;
+    //     Raven.watch(Object.assign({a: 1}, accelerationIncludingGravity));
+    //   },
+    // },
+    {
+      listeners: 'touchmove',
+      cb(e) {
+        e.preventDefault();
+
+        const oneTouch = getFirstTouch(e);
+        const { clientX = 0, clientY = 0 } = oneTouch;
+        const { alpha = 0 } = roatationSave;
+
+        const tX = (clientX - lastClientX) * 0.7;
+        const tZ = (clientY - lastClientY) * 0.7;
+
+        const rad = THREE.Math.degToRad(alpha);
+        const sin = Math.sin(rad);
+        const cos = Math.cos(rad);
+
+        const cX = tZ * sin + tX * cos;
+        const cZ = tZ * cos + tX * sin * -1;
+
+        const tMat = new THREE.Matrix4().makeTranslation(cX, 0, cZ);
+
+        lastClientX = clientX;
+        lastClientY = clientY;
+        models.baseMat.multiply(tMat);
+      },
+    },
+    {
+      listeners: 'deviceorientation',
+      cb(e) {
+        const { alpha = 0, beta = 0, gamma = 0 } = e;
+
+        Object.assign(roatationSave, { alpha, beta, gamma });
+
+        const angleY = THREE.Math.degToRad(alpha + gamma);
+        const angleX = beta === null ? 0 : THREE.Math.degToRad(beta - 90);
+
+        const matY = new THREE.Matrix4().makeRotationY(angleY);
+        const matX = new THREE.Matrix4().makeRotationX(angleX);
+
+        const direction = eye.clone().negate().add(target);
+        direction.applyMatrix4(matY);
+        direction.applyMatrix4(matX);
+
+        const newTarget = eye.clone().add(direction);
+        const newViewMat = getViewMat({
+          cameraMat,
+          view: {
+            eye,
+            target: newTarget,
+            up,
+          },
+        });
+
+        cb && cb(newViewMat);
+      },
+    },
+  ]);
+};
+
 export default {
   resize,
   launch,
@@ -205,4 +337,6 @@ export default {
   getIfFunc,
   worldBuild,
   modelRender,
+  getViewMat,
+  addMobileControl,
 };

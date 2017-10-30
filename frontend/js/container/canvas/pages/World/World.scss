@@ -14,4 +14,12 @@
 
     @extend %full;
   }
+
+  .coord {
+    z-index: 1;
+    margin: 10px;
+    color: white;
+    
+    @extend %full;
+  }
 }
