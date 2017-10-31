@@ -42,7 +42,9 @@ Object.defineProperties(Array.prototype, {
 });
 
 const getArray = (res) => {
-  return res = Array.isArray(res) ? res : [res];
+  res = Array.isArray(res) ? res : [res];
+
+  return res;
 };
 
 const addListeners = (listeners, cb) => (ele) => {
@@ -175,9 +177,12 @@ const animate = func => (...list) => {
 
   function run() {
     id && window.cancelAnimationFrame(id);
-    id = window.requestAnimationFrame(run);
 
-    func(...list);
+    if (!func(...list)) {
+      return null;
+    }
+
+    id = window.requestAnimationFrame(run);
   }
 
   run();
@@ -236,12 +241,87 @@ const getFirstTouch = (e) => {
   return oneTouch;
 };
 
-const addPCControl = (setting = {}, models, cb) => {
+const translateModels = (models) => {
+  const { baseMat } = models;
+
+  return (cX = 0, cZ = 0) => {
+    const mat = new THREE.Matrix4().makeTranslation(cX, 0, cZ);
+    baseMat.multiply(mat);
+  }
+};
+
+const getRotateViewMat = (setting = {}) => {
   const { view: { eye, target, up } = {}, cameraMat } = setting;
+
+  return (angleX = 0, angleY = 0) => {
+    const matX = new THREE.Matrix4().makeRotationX(angleX);
+    const matY = new THREE.Matrix4().makeRotationY(angleY);
+
+    const direction = new THREE.Vector3().subVectors(target, eye);
+    direction.applyMatrix4(matX);
+    direction.applyMatrix4(matY);
+
+    const newTarget = eye.clone().add(direction);
+    const newViewMat = getViewMat({
+      cameraMat,
+      view: {
+        eye,
+        target: newTarget,
+        up,
+      },
+    });
+
+    return newViewMat;
+  };
+};
+
+const addPCControl = (setting = {}, models, cb) => {
   const { innerWidth = 0, innerHeight = 0 } = window;
 
-  let lastClientX = 0;
-  let lastClientY = 0;
+  let baseX = 0;
+  let baseY = 0;
+
+  const mX = Math.PI * 2 / innerWidth;
+  const mY = Math.PI * 2 / innerHeight;
+
+  let cX = 0;
+  let cY = 0;
+  let pressing = true;
+  const distance = 2;
+
+  const getRotateView = getRotateViewMat(setting);
+  const transModels = translateModels(models);
+
+  const keyboards = [
+    {
+      keys: [38, 87, 119], // ⬆, w, W
+      cb(sinD, cosD) {
+        cX = sinD;
+        cY = cosD;
+      },
+    },
+    {
+      keys: [37, 65, 97], // ⬅, a, A
+      cb(sinD, cosD) {
+        cX = -cosD;
+        cY = sinD;
+      },
+    },
+    {
+      keys: [40, 83, 115], // ⬇, s, S
+      cb(sinD, cosD) {
+        cX = -sinD;
+        cY = -cosD;
+      },
+    },
+    {
+      keys: [39, 68, 100], // ➡, d, D
+      cb(sinD, cosD) {
+        cX = cosD;
+        cY = -sinD;
+      },
+    },
+  ];
 
   return batchAddListeners([
     {
@@ -249,69 +329,85 @@ const addPCControl = (setting = {}, models, cb) => {
       cb(e) {
         const ele = e.target;
 
+        if (!ele) {
+          return null;
+        }
+
         ele.requestPointerLock =
           ele.requestPointerLock ||
-          ele.webkitRequestPointerLock ||
           ele.mozRequestPointerLock;
-          
-        ele.requestPointerLock();
-      },
-    },
-    {
-      listeners: 'mouseenter',
-      cb(e) {
-        const { clientX = 0, clientY = 0 } = e;
 
-        lastClientX = clientX;
-        lastClientY = clientY;
+        document.exitPointerLock =
+          document.exitPointerLock ||
+          document.mozExitPointerLock;
+
+        document.pointerLockElement ? document.exitPointerLock() : ele.requestPointerLock();
       },
     },
     {
       listeners: 'mousemove',
       cb(e) {
-        const { clientX = 0, clientY = 0 } = e;
+        if (!document.pointerLockElement) {
+          return null;
+        }
 
-        const angleX = (clientX - lastClientX) * Math.PI / innerWidth;
-        const angleY = (clientY - lastClientY) * Math.PI / innerHeight;
+        const { movementX, movementY } = e;
 
-        const matY = new THREE.Matrix4().makeRotationY(angleY);
-        const matX = new THREE.Matrix4().makeRotationX(angleX);
+        baseX -= (movementY) * 0.3;
+        baseY -= (movementX) * 0.3;
 
-        Raven.watch({
-          angleX,
-          angleY,
-          clientX,
-          clientY,
-          lastClientX,
-          lastClientY,
-        });
+        const angleX = baseX * mX;
+        const angleY = baseY * mY;
 
-        lastClientX = clientX;
-        lastClientY = clientY;
-
-        const direction = new THREE.Vector3().subVectors(target, eye);
-        direction.applyMatrix4(matY);
-        direction.applyMatrix4(matX);
-
-        const newTarget = eye.clone().add(direction);
-        const newViewMat = getViewMat({
-          cameraMat,
-          view: {
-            eye,
-            target: newTarget,
-            up,
-          },
-        });
+        const newViewMat = getRotateView(angleX, angleY);
 
         cb && cb(newViewMat);
+      },
+    },
+    {
+      listeners: 'keydown',
+      cb(e) {
+        const { which } = e;
+        const angleY = baseY * mY;
+
+        const sin = Math.sin(angleY);
+        const cos = Math.cos(angleY);
+
+        const sinD = distance * sin;
+        const cosD = distance * cos;
+
+        keyboards.fakeForEach((item = {}) => {
+          const { keys = [], cb } = item;
+
+          if (!~keys.indexOf(which)) {
+            return null;
+          }
+
+          cb && cb(sinD, cosD);
+        });
+
+        if (pressing) {
+          return null;
+        }
+
+        pressing = true;
+        animate(() => {
+          pressing && transModels(cX, cY);
+
+          return pressing;
+        })();
+      },
+    },
+    {
+      listeners: 'keyup',
+      cb() {
+        pressing = false;
       },
     },
   ]);
 };
 
 const addMobileControl = (setting = {}, models, cb) => {
-  const { view: { eye, target, up } = {}, cameraMat } = setting;
-
   let lastClientX = 0;
   let lastClientY = 0;
 
@@ -320,6 +416,9 @@ const addMobileControl = (setting = {}, models, cb) => {
     alpha: 0,
     gamma: 0,
   };
+
+  const getRotateView = getRotateViewMat(setting);
+  const transModels = translateModels(models);
 
   return batchAddListeners([
     {
@@ -358,11 +457,9 @@ const addMobileControl = (setting = {}, models, cb) => {
         const cX = tZ * sin + tX * cos;
         const cZ = tZ * cos + tX * sin * -1;
 
-        const tMat = new THREE.Matrix4().makeTranslation(cX, 0, cZ);
-
         lastClientX = clientX;
         lastClientY = clientY;
-        models.baseMat.multiply(tMat);
+        transModels(cX, cZ);
       },
     },
     {
@@ -372,25 +469,10 @@ const addMobileControl = (setting = {}, models, cb) => {
 
         Object.assign(roatationSave, { alpha, beta, gamma });
 
-        const angleY = THREE.Math.degToRad(alpha + gamma);
         const angleX = beta === null ? 0 : THREE.Math.degToRad(beta - 90);
+        const angleY = THREE.Math.degToRad(alpha + gamma);
 
-        const matY = new THREE.Matrix4().makeRotationY(angleY);
-        const matX = new THREE.Matrix4().makeRotationX(angleX);
-
-        const direction = new THREE.Vector3().subVectors(target, eye);
-        direction.applyMatrix4(matY);
-        direction.applyMatrix4(matX);
-
-        const newTarget = eye.clone().add(direction);
-        const newViewMat = getViewMat({
-          cameraMat,
-          view: {
-            eye,
-            target: newTarget,
-            up,
-          },
-        });
+        const newViewMat = getRotateView(angleX, angleY);
 
         cb && cb(newViewMat);
       },

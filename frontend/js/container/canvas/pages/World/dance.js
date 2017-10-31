@@ -148,6 +148,8 @@ const dance = (selector) => {
     });
 
     gl.flush();
+
+    return true;
   })();
 };
 

@@ -56,7 +56,7 @@ class World extends Component {
     return (
       <div className={cls}>
         { this.renderBoard() }
-        <canvas id="world" className="canvas" />
+        <canvas id="world" className="canvas" tabIndex={1} autoFocus />
       </div>
     );
   }
