@@ -4,13 +4,13 @@ const getIfFunc = (res) => {
   return res;
 };
 
-const animate = func => (...list) => {
+const animate = func => () => {
   let id;
 
   function run() {
     id && window.cancelAnimationFrame(id);
 
-    if (!func(...list)) {
+    if (!func()) {
       return null;
     }
 
@@ -26,22 +26,21 @@ class Animate {
     this.state = getIfFunc(props);
     this.setAnimate();
   }
-
-  setState(obj = {}) {
+  
+  setState(obj = {}, cb) {
     const { state = {} } = this;
 
-    return Promise.resolve(
-      Object.assign(state, obj)
-    );
+    Object.assign(state, obj);
+    cb && cb(state);
   }
 
   setAnimate(obj = {}) {
-    this.setState(
-      getIfFunc(obj)
-    ).then(() => this.setAnimateFromState());
+    obj = getIfFunc(obj);
+
+    this.setState(obj, this.setAnimateFromState);
   }
 
-  setAnimateFromState(state = this.state) {
+  setAnimateFromState = (state = this.state) => {
     this.animate = animate(() => {
       state.func && state.func();
 
@@ -54,7 +53,7 @@ class Animate {
   start() {
     this.setState({
       runing: true,
-    }).then(() => this.animate());
+    }, this.animate);
   }
 
   stop() {
