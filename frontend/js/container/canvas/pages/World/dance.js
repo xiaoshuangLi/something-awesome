@@ -1,5 +1,7 @@
 import 'three';
 
+import Animate from 'js/components/Animate';
+
 import { createProgramFromSources } from '../../common/func';
 import { launch, patchUniforms, animate, worldBuild, modelRender, getViewMat, addMobileControl, addPCControl } from '../../common/base';
 
@@ -136,7 +138,7 @@ const dance = (selector) => {
 
   let count = 0;
 
-  animate(() => {
+  const ani = new Animate(() => {
     count += 0.01;
     const now = count % 360;
 
@@ -148,9 +150,9 @@ const dance = (selector) => {
     });
 
     gl.flush();
+  });
 
-    return true;
-  })();
+  ani.start();
 };
 
 export default dance;

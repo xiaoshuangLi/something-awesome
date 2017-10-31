@@ -47,6 +47,26 @@ const getArray = (res) => {
   return res;
 };
 
+const getIfFunc = (res, ...args) => {
+  return typeof res === 'function' ? res(...args) : res;
+};
+
+const animate = func => (...list) => {
+  let id;
+
+  function run() {
+    id && window.cancelAnimationFrame(id);
+
+    if (!func(...list)) {
+      return null;
+    }
+
+    id = window.requestAnimationFrame(run);
+  }
+
+  run();
+};
+
 const addListeners = (listeners, cb) => (ele) => {
   ele = getEle(ele);
   listeners = getArray(listeners);
@@ -105,7 +125,7 @@ const launch = (gl) => {
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.clearDepth(1.0);
 
-  gl.clear(gl.COLOR_BUFFER_BIT || gl.DEPTH_BUFFER_BIT);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
   gl.enable(gl.CULL_FACE);
   gl.enable(gl.DEPTH_TEST);
@@ -172,27 +192,6 @@ const patchAttributes = (gl, program, obj = {}) => {
   });
 };
 
-const animate = func => (...list) => {
-  let id;
-
-  function run() {
-    id && window.cancelAnimationFrame(id);
-
-    if (!func(...list)) {
-      return null;
-    }
-
-    id = window.requestAnimationFrame(run);
-  }
-
-  run();
-};
-
-
-const getIfFunc = (res, ...args) => {
-  return typeof res === 'function' ? res(...args) : res;
-};
-
 const worldBuild = (viewMat = new THREE.Matrix4(), cb) => (worldMat = new THREE.Matrix4()) => {
   const worldView = new THREE.Matrix4();
   worldView.multiplyMatrices(viewMat, worldMat);
@@ -247,7 +246,7 @@ const translateModels = (models) => {
   return (cX = 0, cZ = 0) => {
     const mat = new THREE.Matrix4().makeTranslation(cX, 0, cZ);
     baseMat.multiply(mat);
-  }
+  };
 };
 
 const getRotateViewMat = (setting = {}) => {
@@ -377,13 +376,13 @@ const addPCControl = (setting = {}, models, cb) => {
         const cosD = distance * cos;
 
         keyboards.fakeForEach((item = {}) => {
-          const { keys = [], cb } = item;
+          const { keys = [] } = item;
 
           if (!~keys.indexOf(which)) {
             return null;
           }
 
-          cb && cb(sinD, cosD);
+          item.cb && item.cb(sinD, cosD);
         });
 
         if (pressing) {

@@ -18,7 +18,6 @@ const macPlane = new Cube({
   w: 30,
   h: 1,
   l: 22,
-  // color: [0.7, 0.7, 0.7, 1.0],
   color: [0.7, 0.7, 0.7, 1.0],
 });
 
@@ -51,9 +50,6 @@ const screen = new Cube({
 });
 
 const baseTree = {
-  mats: [
-    // now => new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0).normalize(), THREE.Math.degToRad(now * 100)),
-  ],
   baseMat: new THREE.Matrix4().makeTranslation(0, 0, -50),
   models: [table],
   children: [
