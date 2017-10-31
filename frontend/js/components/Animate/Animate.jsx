@@ -1,4 +1,4 @@
-const getIfFunc = (res) => {
+const getIfFunc = (res = {}) => {
   res = typeof res === 'function' ? { func: res } : res;
 
   return res;
@@ -26,7 +26,7 @@ class Animate {
     this.state = getIfFunc(props);
     this.setAnimate();
   }
-  
+
   setState(obj = {}, cb) {
     const { state = {} } = this;
 
@@ -42,12 +42,14 @@ class Animate {
 
   setAnimateFromState = (state = this.state) => {
     this.animate = animate(() => {
-      state.func && state.func();
+      const { state: { func, runing } = {} } = this;
 
-      return state.runing;
+      func && func();
+
+      return runing;
     });
 
-    state.runing && this.start();
+    state.runing && this.animate();
   }
 
   start() {
