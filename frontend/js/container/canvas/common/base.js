@@ -3,6 +3,7 @@ import 'three';
 import { getEle } from 'js/common';
 
 import Raven from 'js/components/Raven';
+import Animate from 'js/components/Animate';
 
 THREE.Matrix4.prototype.watchAt = function(eye, center, up) {
   this.makeTranslation(eye.x, eye.y, eye.z);
@@ -49,22 +50,6 @@ const getArray = (res) => {
 
 const getIfFunc = (res, ...args) => {
   return typeof res === 'function' ? res(...args) : res;
-};
-
-const animate = func => (...list) => {
-  let id;
-
-  function run() {
-    id && window.cancelAnimationFrame(id);
-
-    if (!func(...list)) {
-      return null;
-    }
-
-    id = window.requestAnimationFrame(run);
-  }
-
-  run();
 };
 
 const addListeners = (listeners, cb) => (ele) => {
@@ -286,6 +271,7 @@ const addPCControl = (setting = {}, models, cb) => {
   let cX = 0;
   let cY = 0;
   let pressing = true;
+  let animation = new Animate();
   const distance = 2;
 
   const getRotateView = getRotateViewMat(setting);
@@ -390,17 +376,19 @@ const addPCControl = (setting = {}, models, cb) => {
         }
 
         pressing = true;
-        animate(() => {
-          pressing && transModels(cX, cY);
-
-          return pressing;
-        })();
+        animation.setAnimate({
+          runing: true,
+          func: () => {
+            transModels(cX, cY);
+          },
+        });
       },
     },
     {
       listeners: 'keyup',
       cb() {
         pressing = false;
+        animation.stop();
       },
     },
   ]);
@@ -485,7 +473,6 @@ export default {
   patchUniforms,
   patchAttributes,
   setIndexBuffer,
-  animate,
   getIfFunc,
   worldBuild,
   modelRender,
