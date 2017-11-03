@@ -1,4 +1,7 @@
-import Cube from '../../model/Cube';
+import 'three';
+
+import Cube from 'js/container/canvas/model/Cube';
+import Rect from 'js/container/canvas/model/Rect';
 
 const table = new Cube({
   w: 120,
@@ -49,21 +52,23 @@ const screen = new Cube({
   color: [0.2, 0.2, 0.2, 1.0],
 });
 
-const baseTree = {
-  baseMat: new THREE.Matrix4().makeTranslation(0, 0, -50),
+const desk = {
+  mats: [
+    new THREE.Matrix4().makeTranslation(0, 62, -50),
+  ],
   models: [table],
   children: [
     {
       mats: [
-        new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), THREE.Math.degToRad(10)),
-        new THREE.Matrix4().makeTranslation(-15, 1, 5),
+        new THREE.Matrix4().makeTranslation(-15, 1, 5).multiply(
+          new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), THREE.Math.degToRad(10))
+        ),
       ],
       models: [macPlane],
       children: [
         {
           mats: [
-            new THREE.Matrix4().makeTranslation(0, 10, -16.5),
-            new THREE.Matrix4().makeRotationX(45),
+            new THREE.Matrix4().makeTranslation(0, 10, -16.5).multiply(new THREE.Matrix4().makeRotationX(45)),
           ],
           models: [macPlane],
           children: [
@@ -85,8 +90,9 @@ const baseTree = {
     },
     {
       mats: [
-        new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), THREE.Math.degToRad(-15)),
-        new THREE.Matrix4().makeTranslation(30, 30, -5),
+        new THREE.Matrix4().makeTranslation(30, 30, -5).multiply(
+          new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), THREE.Math.degToRad(-15))
+        ),
       ],
       models: [screenContainer],
       children: [{
@@ -113,4 +119,4 @@ const baseTree = {
   ],
 };
 
-export default baseTree;
+export default desk;

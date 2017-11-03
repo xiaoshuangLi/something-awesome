@@ -76,8 +76,8 @@ function getSopts({ imageData = {}, opts = {} } = {}) {
 
     spots.push({
       color: item,
-      x: x + (cw - width) / 2,
-      y: y + (ch - height) / 2,
+      x: x + Math.floor((cw - width) / 2),
+      y: y + Math.floor((ch - height) / 2),
     });
   });
 

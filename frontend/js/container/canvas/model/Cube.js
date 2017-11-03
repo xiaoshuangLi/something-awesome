@@ -1,4 +1,6 @@
-import { patchAttributes, setIndexBuffer } from '../common/base';
+import Raven from 'js/components/Raven';
+
+import Soul from './Soul';
 
 const normals = new Float32Array([
   0, 0, -1,
@@ -44,20 +46,11 @@ const concatFunc = (items = [], points = []) => {
   return res;
 };
 
-class Cube {
+class Cube extends Soul {
   constructor(props = {}) {
-    this.colors = [];
-    this.normals = normals;
-    this.positions = [];
-    this.indexs = [];
+    super(props);
 
-    this.update(props);
-  }
-
-  update(data = {}) {
-    this.data = data;
-
-    this.calc();
+    this.update(Object.assign({}, props, { normals }));
   }
 
   calc() {
@@ -76,14 +69,14 @@ class Cube {
       [w, h, l],
     ];
 
-    const cubePoints = new Float32Array([
+    const cubePoints = [
       ...concatFunc([1, 0, 3, 2], points),
       ...concatFunc([0, 1, 4, 5], points),
       ...concatFunc([1, 3, 5, 7], points),
       ...concatFunc([3, 2, 7, 6], points),
       ...concatFunc([2, 0, 6, 4], points),
       ...concatFunc([4, 5, 6, 7], points),
-    ]);
+    ];
 
     const positions = cubePoints.map((p, i) => {
       const curr = constants[i % length] / 2;
@@ -92,7 +85,7 @@ class Cube {
       return res;
     });
 
-    let indexs = [];
+    let indices = [];
     let colors = [];
 
     for (let v = 0; v < positions.length / 3; v += 1) {
@@ -101,41 +94,13 @@ class Cube {
       if (v % 4 === 0) {
         const min = v;
 
-        indexs = indexs.concat(getRectangleIndex(min, min + 1, min + 2, min + 3));
+        indices = indices.concat(getRectangleIndex(min, min + 1, min + 2, min + 3));
       }
     }
 
-    colors = new Float32Array(colors);
-    indexs = new Int16Array(indexs);
-
-    this.indexs = indexs;
+    this.indices = indices;
     this.colors = colors;
     this.positions = positions;
-  }
-
-  render(gl, program, obj = {}) {
-    const { pName = 'a_position', NName = 'a_normal', cName = 'a_color' } = obj;
-
-    patchAttributes(gl, program, {
-      [pName]: {
-        data: this.positions,
-        args: [3, gl.FLOAT, false, 0, 0],
-      },
-      [NName]: {
-        data: this.normals,
-        args: [3, gl.FLOAT, false, 0, 0],
-      },
-      [cName]: {
-        data: this.colors,
-        args: [4, gl.FLOAT, false, 0, 0],
-      },
-    });
-
-    setIndexBuffer(gl, {
-      data: this.indexs,
-    });
-
-    gl.drawElements(gl.TRIANGLES, this.indexs.length, gl.UNSIGNED_SHORT, 0);
   }
 }
 

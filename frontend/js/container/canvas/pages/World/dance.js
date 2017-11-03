@@ -1,11 +1,13 @@
 import 'three';
 
 import Animate from 'js/components/Animate';
+import Raven from 'js/components/Raven';
 
-import { createProgramFromSources } from '../../common/func';
-import { launch, patchUniforms, animate, worldBuild, modelRender, getViewMat, addMobileControl, addPCControl } from '../../common/base';
+import { createProgramInfo, setUniforms } from '../../common/webgl';
+import { launch, worldBuild, modelRender, getViewMat, addMobileControl, addPCControl } from '../../common/base';
 
-import beauties from './beauties';
+import things from './things';
+
 
 const vShader = `
   attribute vec4 a_position;
@@ -17,25 +19,31 @@ const vShader = `
 
   varying vec3 v_normal;
   varying vec4 v_color;
+  varying vec4 v_position;
 
   void main() {
     gl_Position = u_world * a_position;
 
     v_normal = mat3(u_worldInverse) * a_normal;
     v_color = a_color;
+    v_position = a_position;
   }
 `;
+
+const width = parseFloat(Math.min(window.innerWidth - 100, 1500)).toFixed(1);
 
 const fShader = `
   precision mediump float;
 
   varying vec3 v_normal;
   varying vec4 v_color;
+  varying vec4 v_position;
 
   uniform vec3 u_light;
   uniform vec3 u_eye;
 
   void main() {
+    float d = distance(v_position.xyz, vec3(0,0,0));
     vec3 normal = normalize(v_normal);
 
     vec3 halfE = normalize(u_eye + u_light);
@@ -44,7 +52,13 @@ const fShader = `
     vec4 light = v_color * vec4(vec3(diffuse), 1.0) + v_color * vec4(vec3(specular), 1.0);
 
     gl_FragColor = light;
-    gl_FragColor.rgb += vec3(0.1, 0.1, 0.1);
+    gl_FragColor.rgb += vec3(0.1, 0.1, 0.1) ;
+
+    if(v_color.a > 0.99) {
+      gl_FragColor.rgb *= clamp((1.0 - d/${width}), 0.0, 1.0);
+    } else {
+      gl_FragColor.a = 1.0;
+    }
   }
 `;
 
@@ -63,13 +77,14 @@ const dance = (selector) => {
   }
 
   launch(gl);
-  const program = createProgramFromSources(gl, [vShader, fShader]);
+  const programInfo = createProgramInfo(gl, [vShader, fShader]);
+  const { program } = programInfo;
 
   const light = new THREE.Vector3(0, 1, 1).normalize();
 
   const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
   const zNear = 1;
-  const zFar = 2000;
+  const zFar = 20000;
   const camera = new THREE.PerspectiveCamera(60, aspect, zNear, zFar);
   const cameraMat = camera.projectionMatrix;
 
@@ -77,27 +92,17 @@ const dance = (selector) => {
   const target = new THREE.Vector3(0, 35, 0);
   const up = new THREE.Vector3(0, 1, 0);
 
-  patchUniforms(gl, program, {
-    u_light: {
-      func: gl.uniform3fv,
-      args: [[light.x, light.y, light.z]],
-    },
-    u_eye: {
-      func: gl.uniform3fv,
-      args: [[eye.x, eye.y, eye.z]],
-    },
+  gl.useProgram(program);
+
+  setUniforms(programInfo, {
+    u_light: [light.x, light.y, light.z],
+    u_eye: [eye.x, eye.y, eye.z],
   });
 
   const worldBaseCb = (worldView, worldInverseTranspose) => {
-    patchUniforms(gl, program, {
-      u_world: {
-        func: gl.uniformMatrix4fv,
-        args: [false, worldView.elements],
-      },
-      u_worldInverse: {
-        func: gl.uniformMatrix4fv,
-        args: [false, worldInverseTranspose.elements],
-      },
+    setUniforms(programInfo, {
+      u_world: worldView.elements,
+      u_worldInverse: worldInverseTranspose.elements,
     });
   };
 
@@ -115,24 +120,24 @@ const dance = (selector) => {
   let modelRenderBase = modelRender({
     setMat: setWorldBase,
     gl,
-    program,
+    programInfo,
   });
 
-  addMobileControl(setting, beauties, (newViewMat) => {
+  addMobileControl(setting, things, (newViewMat) => {
     setWorldBase = worldBuild(newViewMat, worldBaseCb);
     modelRenderBase = modelRender({
       setMat: setWorldBase,
       gl,
-      program,
+      programInfo,
     });
   })();
 
-  addPCControl(setting, beauties, (newViewMat) => {
+  addPCControl(setting, things, (newViewMat) => {
     setWorldBase = worldBuild(newViewMat, worldBaseCb);
     modelRenderBase = modelRender({
       setMat: setWorldBase,
       gl,
-      program,
+      programInfo,
     });
   })('#world');
 
@@ -145,7 +150,7 @@ const dance = (selector) => {
     launch(gl);
 
     modelRenderBase({
-      tree: beauties,
+      tree: things,
       now,
     });
 

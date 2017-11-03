@@ -12,36 +12,6 @@ THREE.Matrix4.prototype.watchAt = function(eye, center, up) {
   return this.getInverse(this);
 };
 
-Object.defineProperties(Array.prototype, {
-  fakeForEach: {
-    value(cb) {
-      const list = this;
-      const { length = 0 } = list;
-
-      if (!length) {
-        return list;
-      }
-
-      for (let v = 0; v < length; v += 1) {
-        cb(list[v], v);
-      }
-    },
-  },
-
-  fakeMap: {
-    value(cb) {
-      const list = this;
-      const res = [];
-
-      list.fakeForEach((item) => {
-        res.push(cb(item));
-      });
-
-      return res;
-    },
-  },
-});
-
 const getArray = (res) => {
   res = Array.isArray(res) ? res : [res];
 
@@ -56,7 +26,7 @@ const addListeners = (listeners, cb) => (ele) => {
   ele = getEle(ele);
   listeners = getArray(listeners);
 
-  listeners.fakeForEach(
+  listeners.forEach(
     listener => ele.addEventListener(listener, e => cb(e, listener), false)
   );
 };
@@ -64,7 +34,7 @@ const addListeners = (listeners, cb) => (ele) => {
 const batchAddListeners = obj => (ele) => {
   obj = getArray(obj);
 
-  obj.fakeForEach((item = {}) => {
+  obj.forEach((item = {}) => {
     const { listeners, cb } = item;
 
     addListeners(listeners, cb)(ele);
@@ -116,68 +86,77 @@ const launch = (gl) => {
   gl.enable(gl.DEPTH_TEST);
 };
 
-const patchUniforms = (gl, program, obj = {}) => {
-  if (!gl || !program) {
-    return null;
-  }
+// const patchUniforms = (gl, program, obj = {}) => {
+//   if (!gl || !program) {
+//     return null;
+//   }
 
-  const keys = Object.keys(obj);
+//   const keys = Object.keys(obj);
 
-  gl.useProgram(program);
+//   gl.useProgram(program);
 
-  keys.fakeForEach((key) => {
-    const uniform = gl.getUniformLocation(program, key);
+//   keys.forEach((key) => {
+//     const uniform = gl.getUniformLocation(program, key);
 
-    const value = obj[key] || {};
-    const { func, args = [] } = value;
+//     const value = obj[key] || {};
+//     const { func, args = [] } = value;
 
-    func.call(gl, uniform, ...args);
-  });
-};
+//     func.call(gl, uniform, ...args);
+//   });
+// };
 
-const setIndexBuffer = (gl, obj = {}) => {
-  if (!gl) {
-    return null;
-  }
-
-  const { target = gl.ELEMENT_ARRAY_BUFFER, usage = gl.STATIC_DRAW, data = [], clear = false } = obj;
-
+const createBuffer = (gl, data, target = gl.ARRAY_BUFFER, usage = gl.STATIC_DRAW) => {
   const buffer = gl.createBuffer();
 
   gl.bindBuffer(target, buffer);
   gl.bufferData(target, data, usage);
 
-  clear && gl.bindBuffer(target, null);
-
   return buffer;
 };
 
-const patchAttributes = (gl, program, obj = {}) => {
-  if (!gl || !program) {
-    return null;
-  }
+// const setIndexBuffer = (gl, obj = {}) => {
+//   if (!gl) {
+//     return null;
+//   }
 
-  const keys = Object.keys(obj);
+//   const { target = gl.ELEMENT_ARRAY_BUFFER, usage = gl.STATIC_DRAW, data = [], clear = false } = obj;
 
-  keys.fakeForEach((key) => {
-    const attribute = gl.getAttribLocation(program, key);
+//   const buffer = gl.createBuffer();
 
-    const value = obj[key] || {};
-    const { data = [], target = gl.ARRAY_BUFFER, usage = gl.STATIC_DRAW, clear = true, args = [] } = value;
+//   gl.bindBuffer(target, buffer);
+//   gl.bufferData(target, data, usage);
 
-    const buffer = gl.createBuffer();
+//   clear && gl.bindBuffer(target, null);
 
-    gl.bindBuffer(target, buffer);
-    gl.bufferData(target, data, usage);
+//   return buffer;
+// };
 
-    gl.enableVertexAttribArray(attribute);
-    gl.vertexAttribPointer(attribute, ...args);
+// const patchAttributes = (gl, program, obj = {}) => {
+//   if (!gl || !program) {
+//     return null;
+//   }
 
-    clear && gl.bindBuffer(target, null);
-  });
-};
+//   const keys = Object.keys(obj);
 
-const worldBuild = (viewMat = new THREE.Matrix4(), cb) => (worldMat = new THREE.Matrix4()) => {
+//   keys.forEach((key) => {
+//     const attribute = gl.getAttribLocation(program, key);
+
+//     const value = obj[key] || {};
+//     const { data = [], target = gl.ARRAY_BUFFER, usage = gl.STATIC_DRAW, clear = true, args = [] } = value;
+
+//     const buffer = gl.createBuffer();
+
+//     gl.bindBuffer(target, buffer);
+//     gl.bufferData(target, data, usage);
+
+//     gl.enableVertexAttribArray(attribute);
+//     gl.vertexAttribPointer(attribute, ...args);
+
+//     clear && gl.bindBuffer(target, null);
+//   });
+// };
+
+const worldBuild = (viewMat, cb) => (worldMat) => {
   const worldView = new THREE.Matrix4();
   worldView.multiplyMatrices(viewMat, worldMat);
 
@@ -189,18 +168,23 @@ const worldBuild = (viewMat = new THREE.Matrix4(), cb) => (worldMat = new THREE.
   cb && cb(worldView, worldInverseTranspose);
 };
 
-const modelRender = ({ gl, program, setMat } = {}) => ({ tree = {}, now = 0 } = {}) => {
+const modelRender = ({ gl, programInfo, setMat } = {}) => ({ tree = {}, now = 0 } = {}) => {
+  let last;
+
   function startMap() {
     const { children = [], mats = [], models = [], baseMat, parentMat } = tree;
 
     const worldMat = new THREE.Matrix4().multiply(baseMat || parentMat);
 
-    mats.fakeForEach(mat => worldMat.multiply(getIfFunc(mat, now)));
+    mats.forEach(mat => worldMat.multiply(getIfFunc(mat, now)));
     setMat && setMat(worldMat);
 
-    models.fakeForEach(model => model && model.render(gl, program));
+    models.forEach(model => {
+      model.render(gl, programInfo, last);
+      last = model;
+    });
 
-    children.fakeForEach((child) => {
+    children.forEach((child) => {
       child.parentMat = worldMat;
       tree = child;
 
@@ -270,8 +254,8 @@ const addPCControl = (setting = {}, models, cb) => {
 
   let cX = 0;
   let cY = 0;
-  let pressing = true;
-  let animation = new Animate();
+  let pressing = false;
+  const animation = new Animate();
   const distance = 2;
 
   const getRotateView = getRotateViewMat(setting);
@@ -361,7 +345,7 @@ const addPCControl = (setting = {}, models, cb) => {
         const sinD = distance * sin;
         const cosD = distance * cos;
 
-        keyboards.fakeForEach((item = {}) => {
+        keyboards.forEach((item = {}) => {
           const { keys = [] } = item;
 
           if (!~keys.indexOf(which)) {
@@ -470,9 +454,9 @@ const addMobileControl = (setting = {}, models, cb) => {
 export default {
   resize,
   launch,
-  patchUniforms,
-  patchAttributes,
-  setIndexBuffer,
+  createBuffer,
+  // patchAttributes,
+  // setIndexBuffer,
   getIfFunc,
   worldBuild,
   modelRender,

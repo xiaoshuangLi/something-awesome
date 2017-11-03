@@ -37,7 +37,7 @@ const song = {
         const inData = e.inputBuffer.getChannelData(0);
         const outData = e.outputBuffer.getChannelData(0);
 
-        for (let v = 0; v < inData.length; v++) {
+        for (let v = 0; v < inData.length; v += 1) {
           outData[v] = inData[v];
         }
 
