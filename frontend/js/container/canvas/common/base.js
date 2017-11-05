@@ -179,7 +179,7 @@ const modelRender = ({ gl, programInfo, setMat } = {}) => ({ tree = {}, now = 0 
     mats.forEach(mat => worldMat.multiply(getIfFunc(mat, now)));
     setMat && setMat(worldMat);
 
-    models.forEach(model => {
+    models.forEach((model) => {
       model.render(gl, programInfo, last);
       last = model;
     });
@@ -243,7 +243,7 @@ const getRotateViewMat = (setting = {}) => {
   };
 };
 
-const addPCControl = (setting = {}, models, cb) => {
+const addPCControl = (setting = {}, models, cb, getScreen) => {
   const { innerWidth = 0, innerHeight = 0 } = window;
 
   let baseX = 0;
@@ -299,6 +299,10 @@ const addPCControl = (setting = {}, models, cb) => {
         const ele = e.target;
 
         if (!ele) {
+          return null;
+        }
+
+        if (getScreen()) {
           return null;
         }
 
@@ -451,6 +455,25 @@ const addMobileControl = (setting = {}, models, cb) => {
   ]);
 };
 
+const createTexrue = (gl, source) => {
+  if (!gl) {
+    return null;
+  }
+
+  const texture = gl.createTexture();
+
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
+
+  return texture;
+};
+
 export default {
   resize,
   launch,
@@ -463,4 +486,7 @@ export default {
   getViewMat,
   addMobileControl,
   addPCControl,
+  createTexrue,
+  addListeners,
+  batchAddListeners,
 };

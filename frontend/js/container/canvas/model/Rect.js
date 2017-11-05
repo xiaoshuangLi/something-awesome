@@ -9,6 +9,13 @@ const getRectangleIndex = (i1 = 0, i2 = 1, i3 = 2, i4 = 3) => {
   ];
 };
 
+const colorTextures = [
+  0.0, 1.0, 0.0, 0.97,
+  0.0, 0.0, 0.0, 0.97,
+  1.0, 1.0, 0.0, 0.97,
+  1.0, 0.0, 0.0, 0.97,
+];
+
 class Rect extends Soul {
   constructor(props) {
     super(props);
@@ -39,8 +46,12 @@ class Rect extends Soul {
   }
 
   _getColors() {
-    const { color = [] } = this.data;
-    
+    const { color = [], useTexture } = this.data;
+
+    if (useTexture) {
+      return colorTextures;
+    }
+
     let colors = [];
 
     for (let v = 0; v < 4; v += 1) {
@@ -51,10 +62,10 @@ class Rect extends Soul {
   }
 
   _getNormals(data = {}) {
-    const { x, y ,z } = data;
-    const normal = [x, y , z];
-    
-    let normals = []
+    const { x, y, z } = data;
+    const normal = [x, y, z];
+
+    let normals = [];
 
     for (let v = 0; v < 4; v += 1) {
       normals = normals.concat(normal);

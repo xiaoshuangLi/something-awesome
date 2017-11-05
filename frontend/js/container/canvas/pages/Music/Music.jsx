@@ -24,7 +24,8 @@ const song = {
         }, resolve);
       };
 
-      const audioCtx = new(window.AudioContext || window.webkitAudioContext);
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const audioCtx = new AudioCtx;
       const source = audioCtx.createMediaElementSource(audio);
       const gainNode = audioCtx.createGain();
       const processor = audioCtx.createScriptProcessor(4096, 1, 1);

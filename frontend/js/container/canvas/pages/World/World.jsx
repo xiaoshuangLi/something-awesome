@@ -8,6 +8,17 @@ import Board from '../../components/Board';
 
 // import build from './build';
 import dance from './dance';
+import screen from './screen';
+
+let isScreen = true;
+
+const setScreen = (res) => {
+  isScreen = !!res;
+};
+
+const getScreen = () => {
+  return isScreen;
+};
 
 class World extends Component {
   constructor(props) {
@@ -28,10 +39,18 @@ class World extends Component {
     //     loaded: true,
     //   }, () => build('#world'));
     // }, 9600);
+    const res = [
+      { world: '#world', screen: '#screen' },
+      { getScreen, setScreen },
+    ];
+
     timeout(() => {
       this.setState({
         loaded: true,
-      }, () => dance('#world'));
+      }, () => {
+        screen(...res);
+        dance(...res);
+      });
     }, 0);
   }
 
@@ -56,7 +75,8 @@ class World extends Component {
     return (
       <div className={cls}>
         { this.renderBoard() }
-        <canvas id="world" className="canvas" tabIndex={1} autoFocus />
+        <canvas id="screen" className="canvas screen" />
+        <canvas id="world" className="canvas" tabIndex={1}/>
       </div>
     );
   }

@@ -38,24 +38,45 @@ const macScreen = new Cube({
   color: [0.2, 0.2, 0.2, 1.0],
 });
 
+const ratio = window.innerHeight / window.innerWidth;
+const screenWidth = 32;
+const screenHeight = screenWidth * ratio;
+
 const screenContainer = new Cube({
   w: 36,
-  h: 60,
+  h: 66,
   l: 3,
   color: [0.6, 0.6, 0.6, 1.0],
 });
 
-const screen = new Cube({
-  w: 32,
-  h: 56,
+const screenBg = new Cube({
+  w: screenWidth,
+  h: 62,
   l: 0,
   color: [0.2, 0.2, 0.2, 1.0],
 });
 
+const screen = new Rect({
+  w: screenWidth,
+  h: screenHeight,
+  color: [1.0, 1.0, 1.0, 0.97],
+  useTexture: true,
+});
+
+const screenMats = [
+  new THREE.Matrix4().makeTranslation(0, 62, -50),
+  new THREE.Matrix4().makeTranslation(30, 33, -5).multiply(
+    new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), THREE.Math.degToRad(-15))
+  ),
+  new THREE.Matrix4().makeTranslation(0.5, 1, 2),
+  new THREE.Matrix4().makeTranslation(screenWidth * -0.5, screenHeight * -0.5, 0.1),
+];
+
+const screenViewMat = screenMats.reduce((a, b) => a.clone().multiply(b), new THREE.Matrix4());
+screenViewMat.multiply(new THREE.Matrix4().makeTranslation(screenWidth / 2, screenHeight / 2, 0));
+
 const desk = {
-  mats: [
-    new THREE.Matrix4().makeTranslation(0, 62, -50),
-  ],
+  mats: [screenMats[0]],
   models: [table],
   children: [
     {
@@ -89,15 +110,17 @@ const desk = {
       ],
     },
     {
-      mats: [
-        new THREE.Matrix4().makeTranslation(30, 30, -5).multiply(
-          new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), THREE.Math.degToRad(-15))
-        ),
-      ],
+      mats: [screenMats[1]],
       models: [screenContainer],
       children: [{
-        mats: [ new THREE.Matrix4().makeTranslation(0.5, 1, 2)],
-        models: [screen],
+        mats: [screenMats[2]],
+        models: [screenBg],
+        children: [
+          {
+            mats: [screenMats[3]],
+            models: [screen],
+          },
+        ],
       }],
     },
     {
@@ -119,4 +142,5 @@ const desk = {
   ],
 };
 
+export { screenViewMat, screenHeight };
 export default desk;
