@@ -243,7 +243,7 @@ const getRotateViewMat = (setting = {}) => {
   };
 };
 
-const addPCControl = (setting = {}, models, cb, getScreen) => {
+const addPCControl = (setting = {}, models, cb, status) => {
   const { innerWidth = 0, innerHeight = 0 } = window;
 
   let baseX = 0;
@@ -302,7 +302,7 @@ const addPCControl = (setting = {}, models, cb, getScreen) => {
           return null;
         }
 
-        if (getScreen()) {
+        if (status.getScreen()) {
           return null;
         }
 
@@ -382,7 +382,7 @@ const addPCControl = (setting = {}, models, cb, getScreen) => {
   ]);
 };
 
-const addMobileControl = (setting = {}, models, cb) => {
+const addMobileControl = (setting = {}, models, cb, status) => {
   let lastClientX = 0;
   let lastClientY = 0;
 

@@ -76,6 +76,18 @@ const getCamera = (angle, near, far) => {
   return camera.projectionMatrix;
 };
 
+const getPercentMat = (mat, ratio) => {
+  const res = new THREE.Matrix4();
+  const resData = res.elements;
+  const targetData = mat.elements;
+
+  targetData.forEach((item, i) => {
+    resData[i] = (item - resData[i]) * ratio + resData[i];
+  });
+
+  return res;
+};
+
 const dance = (selector, status) => {
   if (!selector.world) {
     return null;
@@ -113,13 +125,10 @@ const dance = (selector, status) => {
   const direction = new THREE.Vector3().subVectors(target, eye);
   const ratio = 1 - (screenHeight * Math.pow(3, 0.5) / 2) / 200;
   const tranMat = new THREE.Matrix4().makeTranslation(direction.x * ratio, 0, direction.z * ratio);
+  const tranInverseMat = new THREE.Matrix4().getInverse(tranMat.clone().multiply(screenAdjustMat));
 
   eye.applyMatrix4(tranMat);
   target.applyMatrix4(tranMat);
-
-  // const tranInverseMat = new THREE.Matrix4().getInverse(tranMat.clone().multiply(screenAdjustMat));
-  // eye.applyMatrix4(tranInverseMat);
-  // target.applyMatrix4(tranInverseMat);
 
   gl.useProgram(program);
 
@@ -143,15 +152,15 @@ const dance = (selector, status) => {
     },
     cameraMat,
   };
-  let viewMat = getViewMat(setting);
-  let setWorldBase = worldBuild(viewMat, worldBaseCb);
+  const viewMat = getViewMat(setting);
+  let setWorldBase = worldBuild(getViewMat(setting), worldBaseCb);
   let modelRenderBase = modelRender({
     setMat: setWorldBase,
     gl,
     programInfo,
   });
 
-  const resetRenderBase = (newViewMat = viewMat) => {
+  const resetRenderBase = (newViewMat) => {
     setWorldBase = worldBuild(newViewMat, worldBaseCb);
     modelRenderBase = modelRender({
       setMat: setWorldBase,
@@ -160,10 +169,27 @@ const dance = (selector, status) => {
     });
   };
 
-  addMobileControl(setting, things, resetRenderBase)();
-  addPCControl(setting, things, resetRenderBase, status.getScreen)('#world');
+  const renderChangeToWorld = (ratio) => {
+    const newTranMat = getPercentMat(tranInverseMat, ratio);
+    const newTarget = target.clone().applyMatrix4(newTranMat);
+    const newEye = eye.clone().applyMatrix4(newTranMat);
+
+    setting.view = {
+      up,
+      eye: newEye,
+      target: newTarget,
+    };
+
+    const newViewMat = getViewMat(setting);
+
+    resetRenderBase(newViewMat);
+  };
+
+  addMobileControl(setting, things, resetRenderBase, status)();
 
   let count = 0;
+  let changeRatio = 0;
+  let hasControl = false;
 
   const ani = new Animate(() => {
     count += 0.01;
@@ -172,6 +198,17 @@ const dance = (selector, status) => {
     launch(gl);
 
     const texture = createTexrue(gl, screen);
+
+    if (!status.getScreen() && changeRatio <= Math.PI / 2) {
+      renderChangeToWorld(Math.sin(changeRatio));
+      changeRatio += 0.01;
+    }
+
+    if (!hasControl && changeRatio > Math.PI / 2) {
+      addPCControl(setting, things, resetRenderBase, status)(selector.world);
+
+      hasControl = true;
+    }
 
     setUniforms(programInfo, {
       u_texture: texture,

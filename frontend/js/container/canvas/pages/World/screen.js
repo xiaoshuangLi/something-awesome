@@ -31,16 +31,21 @@ const songs = [
   },
 ];
 
+const exit = {
+  text: 'EXIT',
+  measure: {},
+};
+
 const bg = 'rgb(51, 51, 51)';
 const color = 'rgb(255, 151, 1)';
 const colorLight = 'rgba(255, 151, 1, 0.7)';
 const colorLighter = 'rgba(255, 151, 1, 0.3)';
 
-const fontSize = 28;
-const fontSizeSm = 18;
+const sizeLg = 28;
+const sizeSm = 18;
 const fontName = 'Hiragino Sans GB,Microsoft YaHei,simsun,Helvetica';
-const font = `${fontSize}px ${fontName}`;
-const fontSm = `${fontSizeSm}px ${fontName}`;
+const fontLg = `${sizeLg}px ${fontName}`;
+const fontSm = `${sizeSm}px ${fontName}`;
 
 const dRatio = window.devicePixelRatio;
 
@@ -117,9 +122,10 @@ const isActive = (e, rect = {}) => {
 };
 
 const isActiveNow = () => {
-  const status = songs.some(({ active } = {}) => !!active);
+  const songStatus = songs.some(({ active } = {}) => !!active);
+  const exitStatus = !!exit.active;
 
-  return status;
+  return songStatus || exitStatus;
 };
 
 const setWhenActive = (target) => {
@@ -131,10 +137,9 @@ const addScreenControl = (selector, status) => {
     {
       listeners: 'mousemove',
       cb(e) {
-        if (!status.getScreen()) {
-          return null;
-        }
-
+        // if (!status.getScreen()) {
+        //   return null;
+        // }
 
         let { clientX, clientY } = e;
         const { target } = e;
@@ -151,6 +156,8 @@ const addScreenControl = (selector, status) => {
           const { measure: { name = {}, author = {} } = {} } = song;
           song.active = isActive(fakeEvent, name) || isActive(fakeEvent, author);
         });
+
+        exit.active = isActive(fakeEvent, exit.measure);
 
         setWhenActive(target);
       },
@@ -170,11 +177,13 @@ const addScreenControl = (selector, status) => {
 
         const song = songs.find((item = {}) => !!item.active);
 
-        if (!song) {
-          return null;
+        if (song) {
+          return setAudio(song.src);
         }
 
-        setAudio(song.src);
+        if (exit.active) {
+          return status.setScreen(false);
+        }
       },
     },
   ])(selector);
@@ -194,46 +203,48 @@ const getTextRect = ({ ctx, text, x, y, size } = {}) => {
 };
 
 const renderText = (res = {}) => {
-  const { ctx, text = '', fillStyle = color, fontStyle = font, x = 0, y = 0 } = res;
+  const { ctx, text = '', fillStyle = color, font = fontLg, size = sizeLg, x = 0, y = 0 } = res;
 
   ctx.fillStyle = fillStyle;
-  ctx.font = fontStyle;
+  ctx.font = font;
   ctx.fillText(text, x, y);
+
+  return getTextRect({ ctx, text, x, y, size });
 };
 
 const renderSongs = (ctx) => {
   const margin = 20;
   const marginSm = 10;
   const left = 30;
-  let height = fontSize + left;
+  let height = sizeLg + left;
 
   songs.forEach((song = {}) => {
     const { src, name, active, author, measure = {} } = song;
 
-    renderText({
+    measure.name = renderText({
       ctx,
       text: name,
       fillStyle: active ? colorLighter : color,
-      fontStyle: font,
+      font: fontLg,
+      size: sizeLg,
       x: left,
       y: height,
     });
 
-    measure.name = measure.name || getTextRect({ ctx, text: name, x: left, y: height, size: fontSize });
-    height += fontSizeSm;
+    height += sizeSm;
     height += marginSm;
 
-    renderText({
+    measure.author = renderText({
       ctx,
       text: author,
       fillStyle: active ? colorLighter : colorLight,
-      fontStyle: fontSm,
+      font: fontSm,
+      size: sizeSm,
       x: left,
       y: height,
     });
 
-    measure.author = measure.author || getTextRect({ ctx, text: author, x: left, y: height, size: fontSizeSm });
-    height += fontSize;
+    height += sizeLg;
     height += margin;
   });
 };
@@ -277,6 +288,26 @@ const renderDots = (ctx) => {
   }
 };
 
+const renderExit = (ctx) => {
+  const right = 30;
+  const clientRight = innerWidth * dRatio - right;
+  const height = sizeSm + right;
+
+  const { text, active } = exit;
+
+  ctx.font = fontSm;
+
+  exit.measure = renderText({
+    ctx,
+    text,
+    fillStyle: active ? colorLighter : color,
+    font: fontSm,
+    size: sizeSm,
+    x: clientRight - ctx.measureText(text).width,
+    y: height,
+  });
+};
+
 const screen = (selector = {}, status = {}) => {
   if (!selector.screen) {
     return null;
@@ -284,19 +315,20 @@ const screen = (selector = {}, status = {}) => {
 
   addScreenControl(selector.world, status);
 
-  const test = {
+  const actor = {
     update: (ctx, cw, ch, ratio, w, h) => {
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, cw, ch);
 
       renderSongs(ctx);
+      renderExit(ctx);
       renderDots(ctx);
     },
   };
 
   const res = new Canvas({
     cva: selector.screen,
-    list: [test],
+    list: [actor],
   });
 };
 

@@ -76,7 +76,7 @@ class World extends Component {
       <div className={cls}>
         { this.renderBoard() }
         <canvas id="screen" className="canvas screen" />
-        <canvas id="world" className="canvas" tabIndex={1}/>
+        <canvas id="world" className="canvas" tabIndex={1} />
       </div>
     );
   }
