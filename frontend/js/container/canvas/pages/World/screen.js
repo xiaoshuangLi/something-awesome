@@ -1,6 +1,8 @@
 import Animate from 'js/components/Animate';
 import Raven from 'js/components/Raven';
 
+import { timeout } from 'js/common';
+
 import Canvas from '../../components/View';
 import { batchAddListeners } from '../../common/base';
 
@@ -27,6 +29,12 @@ const songs = [
     name: 'Issues',
     author: 'Julia Michaels',
     src: 'http://oxnb4ky01.bkt.clouddn.com/Julia%20Michaels%20-%20Issues.mp3',
+    measure: {},
+  },
+  {
+    name: 'If You Feel My Love',
+    author: 'Someone Awesome',
+    src: 'http://oxnb4ky01.bkt.clouddn.com/If%20You%20Feel%20My%20Love.mp3',
     measure: {},
   },
 ];
@@ -256,16 +264,16 @@ const renderDots = (ctx) => {
     return null;
   }
 
-  const mouseD = 100;
+  const mouseD = 100 * dRatio;
   const num = Math.pow(length, 0.5);
   const w = dRatio * innerWidth / num;
   const h = dRatio * innerHeight / num;
-  const r = Math.min(innerWidth / num, innerHeight / num) * 0.8;
+  const r = Math.min(w, h) * 0.8;
 
-  for (let v = 0; v < length; v += 1) {
-    const x = v % num;
-    const y = (v - x) / num;
-    const curr = voice[v];
+  voice.forEach((curr, i) => {
+    const x = Math.floor(i / num);
+    const y = i % num;
+
     const res = (curr + 1) / 2;
 
     let currX = (x + 0.5) * w;
@@ -277,15 +285,15 @@ const renderDots = (ctx) => {
     const d = Math.pow(Math.pow(dX, 2) + Math.pow(dY, 2), 0.5);
 
     if (d < mouseD) {
-      currX = mouseX + mouseD * dX / d;
-      currY = mouseY + mouseD * dY / d;
+      currX = mouseX - mouseD * dX / d;
+      currY = mouseY - mouseD * dY / d;
     }
 
     ctx.fillStyle = `rgba(255, 151, 1, ${0.3 * res * mouseD / d})`;
     ctx.beginPath();
     ctx.arc(currX, currY, r * res, 0, Math.PI * 2, false);
     ctx.fill();
-  }
+  });
 };
 
 const renderExit = (ctx) => {

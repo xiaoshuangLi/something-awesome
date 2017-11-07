@@ -34,11 +34,6 @@ class World extends Component {
   }
 
   _stopLoading() {
-    // timeout(() => {
-    //   this.setState({
-    //     loaded: true,
-    //   }, () => build('#world'));
-    // }, 9600);
     const res = [
       { world: '#world', screen: '#screen' },
       { getScreen, setScreen },
